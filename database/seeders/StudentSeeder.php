@@ -18,9 +18,9 @@ class StudentSeeder extends Seeder
     {
         $specialStudent = User::create([
             'email' => 'student@aaa', // Assurez-vous que l'email est valide
-            'password' => Hash::make('aaaaaaaa'), // Mot de passe par défaut
+            'password' => Hash::make('student'), // Mot de passe par défaut
             'remember_token' => Str::random(10),
-            'role' => 'student', // Rôle d'étudiant
+            'role' => 'apprenant', // Rôle d'étudiant
         ]);
 
         // Créez un enregistrement pour cet étudiant dans la table students
@@ -40,7 +40,7 @@ class StudentSeeder extends Seeder
             $user = User::create([
                 'email' => 'student' . $i . '@example.com',
                 'password' => Hash::make('password'), // Mot de passe par défaut
-                'role' => 'student',
+                'role' => 'apprenant',
             ]);
 
             // Créez un étudiant lié à cet utilisateur

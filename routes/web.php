@@ -1,11 +1,16 @@
 <?php
 
 use Inertia\Inertia;
+use App\Models\Formateur;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\FormateurController;
 use App\Http\Controllers\Admin\FormationController;
 use App\Http\Controllers\Admin\DisciplineController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Student\StudentDashboardController;
+use App\Http\Controllers\Student\ApprenantDashboardController;
+use App\Http\Controllers\Formateur\FormateurDashboardController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -41,21 +46,17 @@ Route::middleware(['auth', 'formateur'])->group(function () {
 
 
 Route::middleware(['auth', 'userRole:formateur'])->group(function () {
-    Route::get('formateur/dashboard', function () {
-        return Inertia::render('Formateurs.Dashboard');
-    })->name('formateur.dashboard');
+    Route::get('formateur/dashboard', [FormateurDashboardController::class, 'dashboard'])->name('formateur.dashboard');
+    
+    Route::get('mes-formations', [App\Http\Controllers\Formateur\FormateurController::class, 'mes_formations'])->name('formateur.formations');
 });
 
 
-Route::middleware(['auth', 'userRole:student'])->group(function () {
-    Route::get('student/dashboard', function () {
-        return Inertia::render('Students.Dashboard');
-    })->name('student.dashboard');
+Route::middleware(['auth', 'userRole:apprenant'])->group(function () {
+    Route::get('apprenant/dashboard', [ApprenantDashboardController::class, 'dashboard'])->name('apprenant.dashboard');
 });
 Route::middleware(['auth', 'userRole:admin'])->group(function () {
-    Route::get('bob/dashboard', function () {
-        return Inertia::render('Amdin.Dashboard');
-    })->name('admin.dashboard');
+    Route::get('/bob/dashboard',[AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
 });
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

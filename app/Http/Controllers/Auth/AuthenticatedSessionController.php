@@ -34,16 +34,16 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $userRole = $request->user()->role;
-
         // Détermine la redirection en fonction du rôle
         $route = match ($userRole) {
-            'admin' => route('admin.dashboard'),
-            'formateur' => route('formateur.dashboard'),
-            'apprenant' => route('apprenant.dashboard'),           
+            'admin' => 'admin.dashboard',
+            'formateur' => 'formateur.dashboard',
+            'apprenant' => 'apprenant.dashboard',          
         };
 
         // Redirige vers l'URL déterminée
-        return redirect()->intended($route);
+       
+        return redirect()->route($route);
        }
 
     /**

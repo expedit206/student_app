@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['student', 'formateur', 'admin']); // Définit le champ role comme ENUM
+            $table->enum('role', ['apprenant', 'formateur', 'admin']); // Définit le champ role comme ENUM
             $table->rememberToken();
             $table->timestamps();
         });

@@ -16,7 +16,7 @@ class Formateur extends Model
         'specialite',
         'telephone',
         'dernier_diplome',
-        'administrateur_id', // Si nécessaire pour la relation avec Administrateurs
+        '', // Si nécessaire pour la relation avec Administrateurs
     ];
 
     // Relation avec les formations

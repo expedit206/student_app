@@ -25,7 +25,7 @@ class UserRoleMiddleware
 
         // Récupère le rôle de l'utilisateur authentifié
         $userRole = Auth::user()->role;
-
+// dd($userRole);
         // Vérifie si le rôle de l'utilisateur est dans les rôles autorisés
         if (!in_array($userRole, $roles)) {
             

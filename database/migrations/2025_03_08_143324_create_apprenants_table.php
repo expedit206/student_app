@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('adresse'); // Adresse
             $table->string('telephone'); // Numéro de téléphone
             $table->unsignedBigInteger('niveau_id'); // Clé étrangère vers niveaux
+            $table->foreignId('formation_id')->constrained()->onDelete('cascade'); // Clé étrangère vers formations
 
             $table->timestamps();
         });
