@@ -1,0 +1,74 @@
+@startuml
+
+class Administrateurs {
+    +id: INT
+    +email: VARCHAR
+    +mot_de_passe: VARCHAR
+}
+
+class Apprenants {
+    +id: INT
+    +nom: VARCHAR
+    +prenom: VARCHAR
+    +date_naissance: DATE
+    +adresse: VARCHAR
+    +telephone: VARCHAR
+    +administrateur_id: INT
+    +niveau_id: INT  // Clé étrangère vers Niveaux
+}
+
+class Formateurs {
+    +id: INT
+    +nom: VARCHAR
+    +prenom: VARCHAR
+    +specialite: VARCHAR
+    +telephone: VARCHAR
+    +dernier_diplome: VARCHAR
+    +administrateur_id: INT
+}
+
+class Disciplines {
+    +id: INT
+    +nom_discipline: VARCHAR
+    +description: TEXT
+}
+
+class Formations {
+    +id: INT
+    +titre: VARCHAR
+    +description: TEXT
+    +formateur_id: INT  // Clé étrangère vers Formateurs
+}
+
+class Niveaux {
+    +id: INT
+    +niveau: STRING  // Chaîne de caractères (ex: "Débutant", "Intermédiaire", "Avancé")
+}
+
+class Notes {
+    +id: INT
+    +note: DECIMAL
+    +date_saisie: DATETIME
+    +apprenant_id: INT
+    +discipline_id: INT
+}
+
+class Commentaires {
+    +id: INT
+    +contenu: TEXT
+    +date_commentaire: DATETIME
+    +note_id: INT
+}
+
+Administrateurs "1" -- "0..*" Apprenants : gère >
+Administrateurs "1" -- "0..*" Formateurs : gère >
+Formations "1" -- "0..*" Disciplines : contient >
+Apprenants "1" -- "0..*" Notes : reçoit >
+Disciplines "1" -- "0..*" Notes : évalue >
+Notes "1" -- "0..*" Commentaires : contient >
+Apprenants "0..*" -- "0..*" Formations : s'inscrit à >
+Formations "0..*" -- "0..*" Niveaux : nécessite >
+Apprenants "1" -- "1" Niveaux : a >
+Formateurs "1" -- "0..*" Formations : dispense >
+
+@enduml
