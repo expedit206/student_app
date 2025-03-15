@@ -6,12 +6,13 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
-use Database\Seeders\StudentSeeder;
 use Illuminate\Support\Facades\Hash;
+use Database\Seeders\ApprenantSeeder;
 use Database\Seeders\FormateurSeeder;
 use Database\Seeders\FormationSeeder;
 use Database\Seeders\DisciplineSeeder;
 use Database\Seeders\UsersTableSeeder;
+use Database\Seeders\FormateurFormationSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,9 +26,10 @@ class DatabaseSeeder extends Seeder
             FormateurSeeder::class,
             DisciplineSeeder::class,
             FormationSeeder::class,
+            FormateurFormationSeeder::class,
 
             // UsersTableSeeder::class,
-            StudentSeeder::class,
+            ApprenantSeeder::class,
 
         ]);
 

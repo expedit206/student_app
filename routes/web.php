@@ -37,18 +37,13 @@ Route::resource('formations', FormationController::class);
 Route::resource('disciplines', DisciplineController::class);
 
 
-Route::middleware(['auth', 'formateur'])->group(function () {
-    Route::get('/formateur/mes-formations', [FormateurController::class, 'index'])->name('formateur.formations');
-    Route::get('/formateur/formation/{id}/apprenants', [FormateurController::class, 'showApprenants'])->name('formateur.apprenants');
-    Route::post('/formateur/attribution-notes', [FormateurController::class, 'attributionNotes'])->name('formateur.attribution.notes');
-});
-
-
 
 Route::middleware(['auth', 'userRole:formateur'])->group(function () {
     Route::get('formateur/dashboard', [FormateurDashboardController::class, 'dashboard'])->name('formateur.dashboard');
     
     Route::get('mes-formations', [App\Http\Controllers\Formateur\FormateurController::class, 'mes_formations'])->name('formateur.formations');
+
+    Route::get('/formateurs/formations/apprenants', [App\Http\Controllers\Formateur\FormateurController::class, 'showApprenants'])->name('formateur.apprenants');
 });
 
 

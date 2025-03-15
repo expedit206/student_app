@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Student extends Model
+class Apprenant extends Model
 {
     use HasFactory;
 
@@ -19,6 +19,7 @@ class Student extends Model
         'telephone',
         '', // Si applicable
         'niveau_id', // Clé étrangère vers le niveau
+        'formation_id', // Clé étrangère vers le niveau
     ];
 
     // Définir la relation avec le modèle User

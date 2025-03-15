@@ -37,7 +37,6 @@ class Formations {
     +id: INT
     +titre: VARCHAR
     +description: TEXT
-    +formateur_id: INT  // Clé étrangère vers Formateurs
 }
 
 class Niveaux {
@@ -60,15 +59,35 @@ class Commentaires {
     +note_id: INT
 }
 
+class FormationDiscipline {
+    +formation_id: INT
+    +discipline_id: INT
+}
+
+class FormateurDiscipline {
+    +formateur_id: INT
+    +discipline_id: INT
+}
+
+class FormationFormateur {
+    +formation_id: INT
+    +formateur_id: INT
+}
+
 Administrateurs "1" -- "0..*" Apprenants : gère >
 Administrateurs "1" -- "0..*" Formateurs : gère >
-Formations "1" -- "0..*" Disciplines : contient >
+Formations "0..*" -- "0..*" FormationDiscipline : contient >
+Disciplines "0..*" -- "0..*" FormationDiscipline : est incluse dans >
 Apprenants "1" -- "0..*" Notes : reçoit >
 Disciplines "1" -- "0..*" Notes : évalue >
 Notes "1" -- "0..*" Commentaires : contient >
 Apprenants "0..*" -- "0..*" Formations : s'inscrit à >
 Formations "0..*" -- "0..*" Niveaux : nécessite >
 Apprenants "1" -- "1" Niveaux : a >
-Formateurs "1" -- "0..*" Formations : dispense >
+Formateurs "0..*" -- "0..*" Formations : dispense >
+Formateurs "0..*" -- "0..*" FormateurDiscipline : enseigne >
+Disciplines "0..*" -- "0..*" FormateurDiscipline : est enseigné par >
+Formateurs "0..*" -- "0..*" FormationFormateur : dispense >
+Formations "0..*" -- "0..*" FormationFormateur : est dispensée par >
 
 @enduml

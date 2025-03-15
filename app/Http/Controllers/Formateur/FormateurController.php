@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Formateur;
 
 use Inertia\Inertia;
-use App\Models\Student;
+use App\Models\Formateur;
 use App\Models\Formation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -13,9 +13,18 @@ class FormateurController extends Controller
 {
     public function mes_formations()
     {
-        // Récupérer les formations du formateur authentifié
+        // Vérifier si l'utilisateur est authentifié
+        if (!auth()->check()) {
+            return redirect()->route('login'); // Redirige vers la page de connexion si non authentifié
+        }
+
+        // Récupérer l'ID du formateur authentifié
         $formateurId = auth()->user()->id;
-        $formations = Formation::where('formateur_id', $formateurId)->get();
+
+        // Récupérer les formations du formateur avec les relations pivot
+        $formations = Formation::whereHas('formateurs', function ($query) use ($formateurId) {
+            $query->where('id', $formateurId);
+        })->get();
 
         // Retourner une réponse Inertia avec les données
         return Inertia::render('Formateurs/Formations/Index', [
@@ -23,15 +32,28 @@ class FormateurController extends Controller
         ]);
     }
 
-    public function showApprenants($id)
+    public function showApprenants()
     {
-        // Récupérer les apprenants pour la formation spécifique
-        $apprenants = Student::where('formation_id', $id)->get();
+       
+        $formateurId = auth()->user()->id; // Récupérer l'ID du formateur authentifié
 
-        // Retourner une réponse Inertia avec les données
-        return Inertia::render('Formateurs/Apprenants/Index', [
+        // Récupérer les formations du formateur
+        $formations = Formation::with('apprenants.user')
+            ->whereHas('formateurs', function ($query) use ($formateurId) {
+                $query->where('formateur_id', $formateurId);
+            })
+            ->get();
+
+        // Récupérer tous les apprenants liés à ces formations
+        $apprenants = $formations->flatMap(function ($formation) {
+            return $formation->apprenants; // Récupérer les apprenants pour chaque formation
+        });
+
+        return inertia('Formateurs/Apprenants/Index', [
             'apprenants' => $apprenants,
+            'formations' => $formations,
         ]);
+ 
     }
 
     public function attributionNotes(Request $request)

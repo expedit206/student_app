@@ -17,8 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->integer('nbh_hebdomadaire'); // Ajout du nombre d'heures hebdomadaire
             $table->integer('nbh_total');
-            $table->foreignId('discipline_id')->constrained()->onDelete('cascade');
-            $table->foreignId('formateur_id')->constrained('formateurs')->onDelete('cascade');
+           
             $table->timestamps();
         });
     }

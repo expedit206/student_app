@@ -1,73 +1,169 @@
+<script setup lang="ts">
+import { ref, computed, defineProps } from 'vue';
+import FormateurLayout from '@/components/Formateurs/FormateurLayout.vue';
+
+const props = defineProps<{
+    apprenants: Array<{
+        id: number;
+        nom: string;
+        prenom: string;
+        telephone: string;
+        formation_id: number;
+        user: { email: string };
+    }>;
+    formations: Array<{ id: number; titre: string }>;
+}>();
+
+const searchQuery = ref('');
+const selectedFormation = ref<number | null>(null);
+
+const filteredApprenants = computed(() => {
+    return props.apprenants.filter(apprenant => {
+        const searchTerm = searchQuery.value.toLowerCase();
+        const matchesSearch =
+            apprenant.nom.toLowerCase().includes(searchTerm) ||
+            apprenant.prenom.toLowerCase().includes(searchTerm) ||
+            apprenant.user.email.toLowerCase().includes(searchTerm);
+
+        const matchesFormation = selectedFormation.value
+            ? apprenant.formation_id === selectedFormation.value
+            : true;
+
+        return matchesSearch && matchesFormation;
+    });
+});
+
+const totalApprenants = computed(() => props.apprenants.length);
+const totalFormations = computed(() => props.formations.length);
+const apprenantsParFormation = computed(() => {
+    return props.formations.map(formation => ({
+        titre: formation.titre,
+        count: props.apprenants.filter(a => a.formation_id === formation.id).length
+    })).sort((a, b) => b.count - a.count)[0]?.titre || 'Aucune';
+});
+</script>
+
 <template>
     <FormateurLayout>
-        <div class="p-6 bg-gray-900 text-gray-100">
-            <h1 class="text-2xl font-bold mb-6">Détails de l'Apprenant</h1>
+        <div class="p-6 bg-gray-900 text-gray-100 min-h-screen">
+            <!-- Header -->
+            <h1 class="text-3xl font-extrabold mb-6 flex items-center animate-fade-in">
+                <i class="fas fa-users mr-3 text-blue-400 text-4xl"></i>
+                Gestion des Apprenants
+            </h1>
 
-            <div class="bg-gray-800 rounded-xl shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-white">{{ apprenant.nom }}</h2>
-                <p class="text-gray-300">Email: {{ apprenant.email }}</p>
-                <p class="text-gray-300">Téléphone: {{ apprenant.telephone }}</p>
-                <p class="text-gray-300">Formations Inscrites: {{ apprenant.formations.length }}</p>
+            <!-- Statistiques Compactes -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div
+                    class="bg-gray-800 rounded-lg shadow-md p-4 flex items-center justify-between transform hover:scale-105 transition-transform">
+                    <div class="flex items-center">
+                        <i class="fas fa-user-graduate text-2xl text-blue-400 mr-2"></i>
+                        <div>
+                            <p class="text-xs text-gray-400">Apprenants</p>
+                            <h2 class="text-lg font-bold text-white">{{ totalApprenants }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-gray-800 rounded-lg shadow-md p-4 flex items-center justify-between transform hover:scale-105 transition-transform">
+                    <div class="flex items-center">
+                        <i class="fas fa-book-open text-2xl text-purple-400 mr-2"></i>
+                        <div>
+                            <p class="text-xs text-gray-400">Formations</p>
+                            <h2 class="text-lg font-bold text-white">{{ totalFormations }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-gray-800 rounded-lg shadow-md p-4 flex items-center justify-between transform hover:scale-105 transition-transform">
+                    <div class="flex items-center">
+                        <i class="fas fa-star text-2xl text-yellow-400 mr-2"></i>
+                        <div>
+                            <p class="text-xs text-gray-400">Top Formation</p>
+                            <h2 class="text-lg font-bold text-white truncate">{{ apprenantsParFormation }}</h2>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <h2 class="text-xl font-semibold text-white mb-4">Formations Inscrites</h2>
-            <table class="min-w-full bg-gray-800 rounded-lg">
-                <thead>
-                    <tr>
-                        <th class="py-3 px-4 text-left">Titre de la Formation</th>
-                        <th class="py-3 px-4 text-left">Date d'Inscription</th>
-                        <th class="py-3 px-4 text-left">Note Moyenne</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="formation in apprenant.formations" :key="formation.id">
-                        <td class="py-3 px-4">{{ formation.titre }}</td>
-                        <td class="py-3 px-4">{{ formation.date_inscription }}</td>
-                        <td class="py-3 px-4">{{ formation.note_moyenne }}%</td>
-                    </tr>
-                </tbody>
-            </table>
+            <!-- Filtres -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                <div class="relative flex-1">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input v-model="searchQuery" type="text" placeholder="Rechercher par nom, prénom ou email"
+                        class="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-md hover:shadow-lg transition-shadow" />
+                </div>
+                <div class="relative">
+                    <i
+                        class="fas fa-graduation-cap absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <select v-model="selectedFormation"
+                        class="pl-12 pr-10 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none shadow-md hover:shadow-lg transition-shadow">
+                        <option value="">Toutes les formations</option>
+                        <option v-for="formation in props.formations" :key="formation.id" :value="formation.id">
+                            {{ formation.titre }}
+                        </option>
+                    </select>
+                    <i
+                        class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-gray-700">
+                            <th class="py-4 px-6 text-left text-gray-300 font-semibold">
+                                <i class="fas fa-user mr-2"></i>Nom
+                            </th>
+                            <th class="py-4 px-6 text-left text-gray-300 font-semibold">
+                                <i class="fas fa-user-circle mr-2"></i>Prénom
+                            </th>
+                            <th class="py-4 px-6 text-left text-gray-300 font-semibold">
+                                <i class="fas fa-phone mr-2"></i>Téléphone
+                            </th>
+                            <th class="py-4 px-6 text-left text-gray-300 font-semibold">
+                                <i class="fas fa-envelope mr-2"></i>Email
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="apprenant in filteredApprenants" :key="apprenant.id"
+                            class="border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                            <td class="py-4 px-6 text-gray-100">{{ apprenant.nom }}</td>
+                            <td class="py-4 px-6 text-gray-100">{{ apprenant.prenom }}</td>
+                            <td class="py-4 px-6 text-gray-100">{{ apprenant.telephone }}</td>
+                            <td class="py-4 px-6 text-gray-100">{{ apprenant.user.email }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div v-if="filteredApprenants.length === 0" class="p-6 text-center text-gray-400 animate-pulse">
+                    <i class="fas fa-exclamation-circle mr-2 text-xl"></i>
+                    Aucun apprenant trouvé
+                </div>
+            </div>
         </div>
     </FormateurLayout>
 </template>
 
-<script setup lang="ts">
-import { defineProps } from 'vue';
-import FormateurLayout from '@/Layouts/FormateurLayout.vue'; // Assurez-vous que le chemin est correct
-
-// Définir les propriétés reçues depuis le contrôleur
-const props = defineProps<{
-    apprenant: {
-        id: number;
-        nom: string;
-        email: string;
-        telephone: string;
-        formations: Array<{
-            id: number;
-            titre: string;
-            date_inscription: string;
-            note_moyenne: number;
-        }>
-    }
-}>();
-</script>
-
 <style scoped>
-table {
-    width: 100%;
-    border-collapse: collapse;
+select {
+    background-image: none;
 }
 
-th,
-td {
-    border-bottom: 1px solid #3E3E3A;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-th {
-    background-color: #2D2D2D;
-}
-
-tr:hover {
-    background-color: #3A3A3A;
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
 }
 </style>
