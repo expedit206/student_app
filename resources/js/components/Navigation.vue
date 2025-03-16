@@ -4,7 +4,7 @@
             <h1 class="text-xl">Mon Application</h1>
             <nav>
                 <ul class="flex space-x-4">
-                    <li><TextLink href="/dashboard">Dashboard</TextLink></li>
+                    <!-- <li><TextLink href="/dashboard">Dashboard</TextLink></li> -->
                     <li><TextLink :href="route('student.index')">Étudiants</TextLink></li>
                     <li><TextLink :href="route('formateurs.index')">Formatteurs</TextLink></li>
                     <li><TextLink :href="route('formations.index')">Formations</TextLink></li>

@@ -49,6 +49,11 @@ body {
                         class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
                     <i class="fas fa-users mr-3"></i>Mes Apprenants
                     </TextLink>
+                    <TextLink 
+                    :href="route('formateur.disciplines')"
+                        class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-users mr-3"></i>Mes Disciplines
+                    </TextLink>
                 </nav>
                 <DropdownMenu>
                     <DropdownMenuTrigger>

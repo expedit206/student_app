@@ -13,6 +13,7 @@ use Database\Seeders\FormationSeeder;
 use Database\Seeders\DisciplineSeeder;
 use Database\Seeders\UsersTableSeeder;
 use Database\Seeders\FormateurFormationSeeder;
+use Database\Seeders\DisciplineFormateurSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -30,6 +31,8 @@ class DatabaseSeeder extends Seeder
 
             // UsersTableSeeder::class,
             ApprenantSeeder::class,
+            DisciplineFormateurSeeder::class,
+
 
         ]);
 

@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use App\Models\Formateur;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Formateur\NoteController;
 use App\Http\Controllers\Admin\FormateurController;
 use App\Http\Controllers\Admin\FormationController;
 use App\Http\Controllers\Admin\DisciplineController;
@@ -43,7 +44,14 @@ Route::middleware(['auth', 'userRole:formateur'])->group(function () {
     
     Route::get('mes-formations', [App\Http\Controllers\Formateur\FormateurController::class, 'mes_formations'])->name('formateur.formations');
 
-    Route::get('/formateurs/formations/apprenants', [App\Http\Controllers\Formateur\FormateurController::class, 'showApprenants'])->name('formateur.apprenants');
+    Route::get('mes-apprenants', [App\Http\Controllers\Formateur\FormateurController::class, 'showApprenants'])->name('formateur.apprenants');
+    
+    Route::get('/mes-disciplines', [App\Http\Controllers\Formateur\FormateurController::class, 'showDisciplines'])->name('formateur.disciplines');
+
+
+    /******* note */
+    Route::get('/notes/add/{formationId}/{disciplineId}', [NoteController::class, 'showAddNoteForm'])->name('notes.add');
+    Route::post('/notes', [NoteController::class, 'storeNote'])->name('notes.store');
 });
 
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Formateur;
 use Inertia\Inertia;
 use App\Models\Formateur;
 use App\Models\Formation;
+use App\Models\Discipline;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Apprenant; // Assure-toi d'importer le modèle Apprenant
@@ -23,7 +24,7 @@ class FormateurController extends Controller
 
         // Récupérer les formations du formateur avec les relations pivot
         $formations = Formation::whereHas('formateurs', function ($query) use ($formateurId) {
-            $query->where('id', $formateurId);
+            $query->where('formateurs.id', $formateurId);
         })->get();
 
         // Retourner une réponse Inertia avec les données
@@ -55,6 +56,29 @@ class FormateurController extends Controller
         ]);
  
     }
+    public function showDisciplines()
+    {
+        $formateurId = auth()->user()->id; // Récupérer l'ID du formateur authentifié
+
+        // Récupérer les disciplines associées au formateur
+        $disciplines = Discipline::with('formations')
+            ->whereHas('formateurs', function ($query) use ($formateurId) {
+                $query->where('formateur_id', $formateurId);
+            })
+            ->get();
+
+        // Récupérer les formations associées à ce formateur
+        $formations = Formation::whereHas('formateurs', function ($query) use ($formateurId) {
+            $query->where('formateur_id', $formateurId);
+        })->get();
+
+        return inertia('Formateurs/Disciplines/Index', [
+            'disciplines' => $disciplines,
+            'formations' => $formations, // Passer les formations au composant
+        ]);
+    }
+
+
 
     public function attributionNotes(Request $request)
     {

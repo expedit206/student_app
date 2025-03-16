@@ -20,4 +20,8 @@ class Discipline extends Model
     {
         return $this->belongsToMany(Formation::class, 'discipline_formation');
     }
+    public function formateurs()
+    {
+        return $this->belongsToMany(Formateur::class, 'discipline_formateur');
+    }
 }

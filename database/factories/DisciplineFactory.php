@@ -17,7 +17,7 @@ class DisciplineFactory extends Factory
     public function definition(): array
     {
         return [
-            'nom_discipline' => $this->faker->unique()->word(),
+            'nom' => $this->faker->unique()->word(),
             'description' => $this->faker->sentence(),
         ];
     }

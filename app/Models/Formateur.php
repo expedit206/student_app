@@ -35,4 +35,6 @@ class Formateur extends Model
     {
         return $this->belongsToMany(Discipline::class, 'formateur_discipline', 'formateur_id', 'discipline_id');
     }
+
+    
 }
