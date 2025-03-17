@@ -14,7 +14,7 @@ class FormationController extends Controller
      */
     public function index()
     {
-        $formations = Formation::with('formateurs')->get();
+        $formations = Formation::with('formateurs')->orderBy('id', 'desc')->get();
         return Inertia::render('Admin/Formations/Index', [
             'formations' => $formations,
         ]);
@@ -35,10 +35,11 @@ class FormationController extends Controller
         $request->validate([
             'titre' => 'required|string|max:255',
             'description' => 'required|string',
-            'formateur_id' => 'required|exists:formateurs,id',
+            'nbh_hebdomadaire' => 'required|integer|min:0', // Validation pour heures hebdomadaires
+            'nbh_total' => 'required|integer|min:0', // Validation pour heures totales
         ]);
 
-        Formation::create($request->all());
+        Formation::create($request->all()); // Crée la formation avec toutes les données validées
         return redirect()->route('formations.index')->with('success', 'Formation créée avec succès.');
     }
 
@@ -58,7 +59,6 @@ class FormationController extends Controller
         $request->validate([
             'titre' => 'required|string|max:255',
             'description' => 'required|string',
-            'formateur_id' => 'required|exists:formateurs,id',
         ]);
         $formation->update($request->all());
         return redirect()->route('formations.index')->with('success', 'Formation mise à jour avec succès.');

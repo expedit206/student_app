@@ -29,11 +29,13 @@ class Formateur extends Model
     {
         return $this->belongsToMany(Formation::class, 'formateur_formation', 'formateur_id', 'formation_id');
     }
-  
+
     // Relation avec les disciplines via la table pivot
     public function disciplines()
     {
-        return $this->belongsToMany(Discipline::class, 'formateur_discipline', 'formateur_id', 'discipline_id');
+        return $this->belongsToMany(Discipline::class, 'discipline_formateur')
+            ->withPivot('formation_id')
+            ->withTimestamps();
     }
 
     

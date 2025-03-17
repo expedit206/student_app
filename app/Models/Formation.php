@@ -12,13 +12,16 @@ class Formation extends Model
 {
     use HasFactory; // Ajout du trait HasFactory
 
-    protected $with=[
+    protected $with = [
         'formateurs',
         // 'disciplines'
     ];
+
     protected $fillable = [
         'titre',
         'description',
+        'nbh_hebdomadaire', // Ajout du champ pour heures hebdomadaires
+        'nbh_total',       // Ajout du champ pour heures totales
         // Ajoutez d'autres champs nécessaires ici
     ];
 
@@ -27,6 +30,7 @@ class Formation extends Model
     {
         return $this->belongsToMany(Formateur::class);
     }
+
     public function apprenants()
     {
         return $this->hasMany(Apprenant::class);
@@ -35,6 +39,6 @@ class Formation extends Model
     // Relation avec les disciplines via la table pivot
     public function disciplines()
     {
-        return $this->belongsToMany(Discipline::class, 'formation_discipline', 'formation_id', 'discipline_id');
+        return $this->belongsToMany(Discipline::class);
     }
 }

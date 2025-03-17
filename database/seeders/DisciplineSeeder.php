@@ -13,6 +13,6 @@ class DisciplineSeeder extends Seeder
      */
     public function run(): void
     {
-        Discipline::factory()->count(50)->create();
+        Discipline::factory()->count(10)->create();
     }
 }

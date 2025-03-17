@@ -11,7 +11,7 @@ class Discipline extends Model
 
     // Définissez les attributs qui peuvent être assignés en masse
     protected $fillable = [
-        'nom_discipline',
+        'nom',
         'description',
     ];
 

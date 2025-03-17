@@ -101,6 +101,10 @@ body {
                             class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
                             <i class="fas fa-tachometer-alt mr-3"></i>Dashboard Admin
                         </TextLink>
+                        <TextLink :href="route('apprenants.index')"
+                            class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-user-tie mr-3"></i>Apprenants
+                        </TextLink>
                         <TextLink :href="route('formateurs.index')"
                             class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
                             <i class="fas fa-user-tie mr-3"></i>Formateurs
@@ -108,6 +112,10 @@ body {
                         <TextLink :href="route('formations.index')"
                             class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
                             <i class="fas fa-book mr-3"></i>Formations
+                        </TextLink>
+                        <TextLink :href="route('disciplines.index')"
+                            class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-book mr-3"></i>disciplines
                         </TextLink>
                     </div>
                 </nav>
@@ -135,7 +143,7 @@ body {
             </aside>
 
             <!-- Main Content -->
-            <main class="flex-1 p-6 overflow-y-scroll">
+            <main class="flex-1 p-6 overflow-y-scroll max-w-[95vw]">
                 <slot></slot> <!-- Contenu spécifique aux pages sera inséré ici -->
             </main>
         </div>

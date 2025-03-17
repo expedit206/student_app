@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use App\Models\Niveau;
+use App\Models\Formation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Apprenant extends Model
 {
@@ -17,7 +20,6 @@ class Apprenant extends Model
         'date_naissance',
         'adresse',
         'telephone',
-        '', // Si applicable
         'niveau_id', // Clé étrangère vers le niveau
         'formation_id', // Clé étrangère vers le niveau
     ];
@@ -27,6 +29,10 @@ class Apprenant extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function formation()
+    {
+        return $this->belongsTo(Formation::class);
+    }
 
     // Si un étudiant a plusieurs cours :
     // public function courses()
@@ -34,5 +40,10 @@ class Apprenant extends Model
     //     return $this->hasMany(Course::class);
     // }
 
+
+    public function niveau()
+    {
+        return $this->belongsTo(Niveau::class);
+    }
    
 }

@@ -2,30 +2,37 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Formation;
 use App\Models\Discipline;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class DisciplineController extends Controller
 {
+
     public function index()
     {
-        $disciplines = Discipline::all(); // Ajoutez le tri si nécessaire
-        return inertia('Disciplines/Index', ['disciplines' => $disciplines]);
+        $disciplines = Discipline::with('formations')->orderBy('id', 'desc')->get();
+        $formations = Formation::all();
+
+        return inertia('Admin/Disciplines/Index', [
+            'disciplines' => $disciplines,
+            'formations' => $formations,
+        ]);
     }
 
     public function create()
     {
-        return inertia('Disciplines/Create');
+        return inertia('Admin/Disciplines/Create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nom_discipline' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
-
+// dd($validated);
         Discipline::create($validated);
         return redirect()->route('disciplines.index')->with('success', 'Discipline créée avec succès.');
     }
@@ -33,17 +40,16 @@ class DisciplineController extends Controller
     public function edit($id)
     {
         $discipline = Discipline::findOrFail($id);
-        return inertia('Disciplines/Edit', ['discipline' => $discipline]);
+        return inertia('Admin/Disciplines/Edit', ['discipline' => $discipline]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request,Discipline $discipline)
     {
         $validated = $request->validate([
-            'nom_discipline' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
-        $discipline = Discipline::findOrFail($id);
         $discipline->update($validated);
         return redirect()->route('disciplines.index')->with('success', 'Discipline mise à jour avec succès.');
     }

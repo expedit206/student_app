@@ -97,6 +97,10 @@ function deleteFormation(id) {
                                     class="w-40 px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 text-sm">
                                     <i class="fas fa-cogs mr-1"></i>Actions
                                 </th>
+                                <th
+                                    class="w-40 px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 text-sm">
+                                    <i class="fas fa-cogs mr-1"></i>Disciplines
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -115,6 +119,7 @@ function deleteFormation(id) {
                                     formation.nbh_hebdomadaire }}</td>
                                 <td class="px-2 py-3 text-gray-900 dark:text-gray-100 text-sm">{{ formation.nbh_total }}
                                 </td>
+
                                 <td class="px-2 py-3 flex space-x-2">
                                     <TextLink :href="route('formations.edit', formation.id)"
                                         class="text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300 transition-colors duration-200 flex items-center text-sm">
@@ -126,6 +131,12 @@ function deleteFormation(id) {
                                         <i class="fas fa-trash mr-1 animate-pulse"></i>
                                         Supprimer
                                     </button>
+                                </td>
+                                <td>
+                                    <TextLink :href="route('formations.manageDisciplineAssociations', formation.id)"
+                                        class="text-blue-500 hover:text-blue-700">
+                                        Gérer Disciplines
+                                    </TextLink>
                                 </td>
                             </tr>
                         </tbody>

@@ -7,7 +7,7 @@ use App\Models\Apprenant;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Faker\Factory as Faker;
 
 class ApprenantSeeder extends Seeder
 {
@@ -16,6 +16,9 @@ class ApprenantSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = Faker::create(); // Initialiser Faker
+
+        // Créez un utilisateur spécial
         $specialApprenant = User::create([
             'email' => 'apprenant@aaa', // Assurez-vous que l'email est valide
             'password' => Hash::make('apprenant'), // Mot de passe par défaut
@@ -31,15 +34,15 @@ class ApprenantSeeder extends Seeder
             'date_naissance' => now()->subYears(rand(18, 25)), // Âge aléatoire
             'adresse' => 'Adresse spéciale',
             'telephone' => '0600000000', // Numéro de téléphone fictif
-            'niveau_id' => rand(1, 5), // Supposons que vous ayez des niveaux de 1 à 5
-            'formation_id' => rand(1, 5), // Ajoutez une clé étrangère vers les formations
+            'niveau_id' => rand(1, 10), // Supposons que vous ayez des niveaux de 1 à 10
+            'formation_id' => rand(1, 10), // Ajoutez une clé étrangère vers les formations
         ]);
 
         // Créez des utilisateurs et des étudiants
         for ($i = 1; $i <= 50; $i++) {
             // Créez un utilisateur
             $user = User::create([
-                'email' => 'Apprenant' . $i . '@example.com',
+                'email' => 'apprenant' . $i . '@example.com',
                 'password' => Hash::make('password'), // Mot de passe par défaut
                 'role' => 'apprenant',
             ]);
@@ -47,13 +50,13 @@ class ApprenantSeeder extends Seeder
             // Créez un étudiant lié à cet utilisateur
             Apprenant::create([
                 'user_id' => $user->id, // Clé étrangère
-                'nom' => 'Nom' . $i,
-                'prenom' => 'Prénom' . $i,
-                'date_naissance' => now()->subYears(rand(18, 25)), // Âge aléatoire
-                'adresse' => 'Adresse ' . $i,
+                'nom' => $faker->lastName, // Utiliser Faker pour un nom aléatoire
+                'prenom' => $faker->firstName, // Utiliser Faker pour un prénom aléatoire
+                'date_naissance' => $faker->dateTimeBetween('-25 years', '-18 years'), // Âge aléatoire
+                'adresse' => $faker->address, // Utiliser Faker pour une adresse
                 'telephone' => '06000000' . $i, // Numéro de téléphone fictif
-                'niveau_id' => rand(1, 5), // Supposons que vous ayez des niveaux de 1 à 5
-                'formation_id' => rand(1, 5), // Ajoutez une clé étrangère vers les formations
+                'niveau_id' => rand(1, 10), // Supposons que vous ayez des niveaux de 1 à 10
+                'formation_id' => rand(1, 10), // Ajoutez une clé étrangère vers les formations
             ]);
         }
     }

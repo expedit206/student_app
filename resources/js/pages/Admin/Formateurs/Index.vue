@@ -60,6 +60,10 @@
                                     class="w-40 px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 text-sm">
                                     <i class="fas fa-cogs mr-1"></i>Actions
                                 </th>
+                                <th
+                                    class="w-40 px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 text-sm">
+                                    <i class="fas fa-cogs mr-1"></i>Associations
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -93,6 +97,12 @@
                                         <i class="fas fa-trash mr-1 animate-pulse"></i>
                                         Supprimer
                                     </button>
+                                </td>
+                                <td>
+                                    <TextLink :href="route('formateurs.manageAssociations', formateur.id)"
+                                        class="text-blue-500 hover:text-blue-700">
+                                        Gérer Associations
+                                    </TextLink>
                                 </td>
                             </tr>
                         </tbody>
