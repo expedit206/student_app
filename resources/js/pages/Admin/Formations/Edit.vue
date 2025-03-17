@@ -36,8 +36,7 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
-import MonLayout from '@/layouts/MonLayout.vue';
-
+import MonLayout from '@/components/MonLayout.vue';
 const { formation, formateurs } = usePage().props;
 
 // Utilisation de useForm pour gérer le formulaire

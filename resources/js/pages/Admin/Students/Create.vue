@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue'; // Importer le composant InputError
-import MonLayout from '@/Layouts/MonLayout.vue'; // Importer le composant MonLayout
+import MonLayout from '@/layouts/nLayout.vue'; // Importer le composant MonLayout
 const form = useForm({
     name: '',
     email: '',

@@ -10,6 +10,6 @@ class AdminDashboardController extends Controller
 {
      function dashboard()
     {
-        return inertia('Admin/Dashboard');
+        return inertia('Admin/AdminDashboard');
     }
 }

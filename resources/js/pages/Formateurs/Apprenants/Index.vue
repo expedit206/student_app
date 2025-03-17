@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, defineProps } from 'vue';
-import FormateurLayout from '@/components/Formateurs/FormateurLayout.vue';
+import FormateurLayout from '@/components/MonLayout.vue';
 
 const props = defineProps<{
     apprenants: Array<{

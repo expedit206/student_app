@@ -12,12 +12,12 @@ class FormateurController extends Controller
     public function index()
     {
         $formateurs = Formateur::all();
-        return Inertia::render('Formateurs/Index', ['formateurs' => $formateurs]);
+        return Inertia::render('Admin/Formateurs/Index', ['formateurs' => $formateurs]);
     }
 
     public function create()
     {
-        return Inertia::render('Formateurs/Create');
+        return Inertia::render('Admin/Formateurs/Create');
     }
 
     public function store(Request $request)
@@ -36,7 +36,7 @@ class FormateurController extends Controller
 
     public function edit(Formateur $formateur)
     {
-        return Inertia::render('Formateurs/Edit', ['formateur' => $formateur]);
+        return Inertia::render('Admin/Formateurs/Edit', ['formateur' => $formateur]);
     }
 
     public function update(Request $request, Formateur $formateur)

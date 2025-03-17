@@ -42,7 +42,7 @@ class AuthenticatedSessionController extends Controller
         };
 
         // Redirige vers l'URL déterminée
-       
+    //    dd($route);
         return redirect()->route($route);
        }
 

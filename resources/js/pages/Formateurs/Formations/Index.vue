@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
-import FormateurLayout from '@/components/Formateurs/FormateurLayout.vue';
+import FormateurLayout from '@/components/MonLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps<{

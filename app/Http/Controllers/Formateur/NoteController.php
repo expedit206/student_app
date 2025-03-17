@@ -3,11 +3,29 @@
 namespace App\Http\Controllers\Formateur;
 
 use App\Models\Note;
+use App\Models\Formation;
+use App\Models\Discipline;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class NoteController extends Controller
 {
+    public function index()
+    {
+        // Récupérer toutes les notes
+        $notes = Note::with('etudiant')->get();
+
+        // Récupérer les formations et disciplines disponibles pour le filtrage
+        $formations = Formation::all();
+        $disciplines = Discipline::all();
+
+        return inertia('Formateurs/Notes/Index', [
+            'notes' => $notes,
+            'formations' => $formations,
+            'disciplines' => $disciplines,
+        ]);
+    }
+
     public function showAddNoteForm($formationId, $disciplineId)
     {
         $formateurId = auth()->user()->id;

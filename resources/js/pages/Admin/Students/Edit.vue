@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/vue3';
 import { useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import { onMounted, ref } from 'vue';
-import MonLayout from '@/layouts/MonLayout.vue';
+import MonLayout from '@/layouts/nLayout.vue';
 const props = defineProps({
     student: Object, // L'étudiant à modifier
 });
@@ -36,17 +36,17 @@ function submitForm() {
             <form @submit.prevent="submitForm">
                 <div class="mb-4">
                     <label for="name" class="block">Nom</label>
-                    <input  type="text" v-model="form.name" class="border rounded p-2 text-black w-full" required />
+                    <input type="text" v-model="form.name" class="border rounded p-2 text-black w-full" required />
                     <InputError :message="form.errors.name" />
                 </div>
                 <div class="mb-4">
                     <label for="email" class="block">Email</label>
-                    <input  type="email" v-model="form.email" class="border text-black rounded p-2 w-full" required />
+                    <input type="email" v-model="form.email" class="border text-black rounded p-2 w-full" required />
                     <InputError :message="form.errors.email" />
                 </div>
                 <div class="mb-4">
                     <label for="password" class="block">Nouveau Mot de passe (laisser vide si pas de changement)</label>
-                    <input  type="password" v-model="form.password" class="border text-black rounded p-2 w-full" />
+                    <input type="password" v-model="form.password" class="border text-black rounded p-2 w-full" />
                     <InputError :message="form.errors.password" />
                 </div>
                 <button type="submit" class="bg-blue-500 text-white rounded p-2">Mettre à Jour</button>

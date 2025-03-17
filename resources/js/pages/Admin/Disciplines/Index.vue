@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TextLink from '@/components/TextLink.vue';
-import MonLayout from '@/layouts/MonLayout.vue';
+import MonLayout from '@/layouts/nLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';

@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import FormateurLayout from '@/components/Formateurs/FormateurLayout.vue';
+import FormateurLayout from '@/components/MonLayout.vue';
 const dashboardData = ref({
     totalFormations: 3, // Formations gérées par le formateur
     totalApprenants: 50, // Apprenants inscrits à ses formations

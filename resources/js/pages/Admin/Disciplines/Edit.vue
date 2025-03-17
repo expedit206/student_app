@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MonLayout from '@/layouts/MonLayout.vue';
+import MonLayout from '@/layouts/nLayout.vue';
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';

@@ -15,7 +15,7 @@ use App\Http\Controllers\Formateur\FormateurDashboardController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
-})->name('home');
+})->name('hom');
 
 // Route::get('dashboard', function () {
 //     return Inertia::render('MonDashboard');
@@ -40,6 +40,11 @@ Route::resource('disciplines', DisciplineController::class);
 
 
 Route::middleware(['auth', 'userRole:formateur'])->group(function () {
+
+        Route::get('/', function () {
+            return Inertia::render('Welcome');
+        })->name('dashboard');
+    
     Route::get('formateur/dashboard', [FormateurDashboardController::class, 'dashboard'])->name('formateur.dashboard');
     
     Route::get('mes-formations', [App\Http\Controllers\Formateur\FormateurController::class, 'mes_formations'])->name('formateur.formations');
@@ -50,16 +55,26 @@ Route::middleware(['auth', 'userRole:formateur'])->group(function () {
 
 
     /******* note */
-    Route::get('/notes/add/{formationId}/{disciplineId}', [NoteController::class, 'showAddNoteForm'])->name('notes.add');
+    // Route::get('/notes/add/{formationId}/{disciplineId}', [NoteController::class, 'showAddNoteForm'])->name('notes.add');
+    
     Route::post('/notes', [NoteController::class, 'storeNote'])->name('notes.store');
+
+    Route::get('/notes', [NoteController::class, 'index'])->name('formateur.notes');
 });
 
 
 Route::middleware(['auth', 'userRole:apprenant'])->group(function () {
     Route::get('apprenant/dashboard', [ApprenantDashboardController::class, 'dashboard'])->name('apprenant.dashboard');
 });
-Route::middleware(['auth', 'userRole:admin'])->group(function () {
-    Route::get('/bob/dashboard',[AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
+Route::middleware(['auth', 'userRole:admin'])->prefix('bob')->group(function () {
+
+    Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
+
+    Route::resource('formateurs', FormateurController::class);
+
+    Route::resource('formations', FormationController::class);
+
+    Route::resource('disciplines', DisciplineController::class);
 });
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

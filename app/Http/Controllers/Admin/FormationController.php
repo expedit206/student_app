@@ -14,8 +14,8 @@ class FormationController extends Controller
      */
     public function index()
     {
-        $formations = Formation::with('formateur')->get();
-        return Inertia::render('Formations/Index', [
+        $formations = Formation::with('formateurs')->get();
+        return Inertia::render('Admin/Formations/Index', [
             'formations' => $formations,
         ]);
     }
@@ -24,7 +24,7 @@ class FormationController extends Controller
     public function create()
     {
         $formateurs = Formateur::all();
-        return Inertia::render('Formations/Create', [
+        return Inertia::render('Admin/Formations/Create', [
             'formateurs' => $formateurs,
         ]);
     }
@@ -46,7 +46,7 @@ class FormationController extends Controller
     public function edit(Formation $formation)
     {
         $formateurs = Formateur::all();
-        return Inertia::render('Formations/Edit', [
+        return Inertia::render('Admin/Formations/Edit', [
             'formation' => $formation,
             'formateurs' => $formateurs,
         ]);
