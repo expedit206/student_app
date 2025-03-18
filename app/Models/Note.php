@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Apprenant;
+use App\Models\Formation;
+use App\Models\Discipline;
 use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model
 {
-    protected $fillable = ['etudiant_id', 'discipline_id', 'formation_id', 'note'];
+    protected $fillable = ['apprenant_id', 'discipline_id', 'formation_id', 'note'];
 
-    public function etudiant()
+    public function apprenant()
     {
-        return $this->belongsTo(Etudiant::class);
+        return $this->belongsTo(Apprenant::class);
     }
 
     public function discipline()
@@ -22,5 +25,4 @@ class Note extends Model
     {
         return $this->belongsTo(Formation::class);
     }
-
 }

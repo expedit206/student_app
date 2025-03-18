@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, defineProps } from 'vue';
+import { ref, computed } from 'vue';
 import FormateurLayout from '@/components/MonLayout.vue';
-
+import TextLink from '@/components/TextLink.vue';
 const props = defineProps<{
     apprenants: Array<{
         id: number;
@@ -12,10 +12,11 @@ const props = defineProps<{
         user: { email: string };
     }>;
     formations: Array<{ id: number; titre: string }>;
+    selectedFormation: number | null;
 }>();
 
 const searchQuery = ref('');
-const selectedFormation = ref<number | null>(null);
+const selectedFormation = ref<number | null>(props.selectedFormation); // État initial depuis l'URL
 
 const filteredApprenants = computed(() => {
     return props.apprenants.filter(apprenant => {
@@ -33,35 +34,45 @@ const filteredApprenants = computed(() => {
     });
 });
 
-const totalApprenants = computed(() => props.apprenants.length);
+const totalApprenants = computed(() => filteredApprenants.value.length);
 const totalFormations = computed(() => props.formations.length);
 const apprenantsParFormation = computed(() => {
-    return props.formations.map(formation => ({
-        titre: formation.titre,
-        count: props.apprenants.filter(a => a.formation_id === formation.id).length
-    })).sort((a, b) => b.count - a.count)[0]?.titre || 'Aucune';
+    const formationsStats = props.formations
+        .map(formation => ({
+            titre: formation.titre,
+            count: props.apprenants.filter(a => a.formation_id === formation.id).length,
+        }))
+        .sort((a, b) => b.count - a.count);
+    const maxCount = formationsStats[0]?.count || 0;
+    const topFormations = formationsStats.filter(f => f.count === maxCount);
+    return topFormations.length > 0
+        ? topFormations.map(f => `${f.titre} (${f.count})`).join(', ')
+        : 'Aucune';
 });
-
-// Fonction pour obtenir le titre de la formation à partir de l'ID
 const getFormationTitre = (formationId: number) => {
     const formation = props.formations.find(f => f.id === formationId);
     return formation ? formation.titre : 'Non assignée';
+};
+
+// Changer la formation localement
+const changeFormation = (formationId: number | null) => {
+    selectedFormation.value = formationId; // Mise à jour locale uniquement
 };
 </script>
 
 <template>
     <FormateurLayout>
         <div class="p-6 bg-gray-900 text-gray-100 min-h-screen overflow-hidden">
-            <!-- Header -->
             <h1 class="text-3xl font-extrabold mb-8 flex items-center animate-slide-in">
                 <i class="fas fa-users mr-3 text-blue-400 text-4xl animate-spin-slow"></i>
                 Gestion des Apprenants
             </h1>
-
-            <!-- Statistiques Compactes -->
-            <div class="grid grid-cols-3 gap-4 mb-8">
-                <div class="bg-gray-800 rounded-lg shadow-lg p-4 flex items-center justify-between transform hover:scale-105 transition-all duration-300 animate-bounce-in"
-                    :style="{ animationDelay: '0.1s' }">
+            <TextLink :href="route('formateur.notes')" class="text-blue-400 hover:text-blue-300 mb-4 inline-block">
+                <i class="fas fa-star mr-2"></i> Gérer les notes
+            </TextLink>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div
+                    class="bg-gray-800 rounded-lg shadow-lg p-4 flex items-center justify-between transform hover:scale-105 transition-all duration-300 animate-bounce-in">
                     <div class="flex items-center">
                         <i class="fas fa-user-graduate text-2xl text-blue-400 mr-3 animate-pulse"></i>
                         <div>
@@ -70,8 +81,8 @@ const getFormationTitre = (formationId: number) => {
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-800 rounded-lg shadow-lg p-4 flex items-center justify-between transform hover:scale-105 transition-all duration-300 animate-bounce-in"
-                    :style="{ animationDelay: '0.2s' }">
+                <div
+                    class="bg-gray-800 rounded-lg shadow-lg p-4 flex items-center justify-between transform hover:scale-105 transition-all duration-300 animate-bounce-in">
                     <div class="flex items-center">
                         <i class="fas fa-book-open text-2xl text-purple-400 mr-3 animate-pulse"></i>
                         <div>
@@ -80,8 +91,8 @@ const getFormationTitre = (formationId: number) => {
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-800 rounded-lg shadow-lg p-4 flex items-center justify-between transform hover:scale-105 transition-all duration-300 animate-bounce-in"
-                    :style="{ animationDelay: '0.3s' }">
+                <div
+                    class="bg-gray-800 rounded-lg shadow-lg p-4 flex items-center justify-between transform hover:scale-105 transition-all duration-300 animate-bounce-in">
                     <div class="flex items-center">
                         <i class="fas fa-star text-2xl text-yellow-400 mr-3 animate-pulse"></i>
                         <div>
@@ -93,20 +104,19 @@ const getFormationTitre = (formationId: number) => {
                 </div>
             </div>
 
-            <!-- Filtres -->
             <div class="flex flex-col sm:flex-row gap-4 mb-8">
-                <div class="relative flex-1 animate-fade-up" :style="{ animationDelay: '0.4s' }">
+                <div class="relative flex-1 animate-fade-up">
                     <i
                         class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 animate-pulse"></i>
                     <input v-model="searchQuery" type="text" placeholder="Rechercher par nom, prénom ou email"
                         class="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-md hover:shadow-xl transition-all duration-300 hover:bg-gray-700" />
                 </div>
-                <div class="relative animate-fade-up" :style="{ animationDelay: '0.5s' }">
+                <div class="relative animate-fade-up">
                     <i
                         class="fas fa-graduation-cap absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 animate-pulse"></i>
-                    <select v-model="selectedFormation"
+                    <select v-model="selectedFormation" @change="changeFormation(selectedFormation)"
                         class="pl-12 pr-10 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none shadow-md hover:shadow-xl transition-all duration-300 hover:bg-gray-700">
-                        <option value="">Toutes les formations</option>
+                        <option :value="null">Toutes les formations</option>
                         <option v-for="formation in props.formations" :key="formation.id" :value="formation.id">
                             {{ formation.titre }}
                         </option>
@@ -115,29 +125,23 @@ const getFormationTitre = (formationId: number) => {
                         class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 animate-bounce pointer-events-none"></i>
                 </div>
             </div>
+            <p class="mb-4 text-gray-400">{{ filteredApprenants.length }} Apprenants trouvés</p>
 
-            <!-- Table -->
             <div
                 class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)]">
                 <table class="min-w-full">
                     <thead>
-                        <tr class="bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200 animate-slide-in"
-                            :style="{ animationDelay: '0.6s' }">
-                            <th class="py-4 px-6 text-left font-semibold">
-                                <i class="fas fa-user mr-2 text-blue-400 animate-pulse"></i>Nom
-                            </th>
-                            <th class="py-4 px-6 text-left font-semibold">
-                                <i class="fas fa-user-circle mr-2 text-blue-400 animate-pulse"></i>Prénom
-                            </th>
-                            <th class="py-4 px-6 text-left font-semibold">
-                                <i class="fas fa-phone mr-2 text-green-400 animate-pulse"></i>Téléphone
-                            </th>
-                            <th class="py-4 px-6 text-left font-semibold">
-                                <i class="fas fa-graduation-cap mr-2 text-purple-400 animate-pulse"></i>Formation
-                            </th>
-                            <th class="py-4 px-6 text-left font-semibold">
-                                <i class="fas fa-envelope mr-2 text-yellow-400 animate-pulse"></i>Email
-                            </th>
+                        <tr class="bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200 animate-slide-in">
+                            <th class="py-4 px-6 text-left font-semibold"><i
+                                    class="fas fa-user mr-2 text-blue-400 animate-pulse"></i>Nom</th>
+                            <th class="py-4 px-6 text-left font-semibold"><i
+                                    class="fas fa-user-circle mr-2 text-blue-400 animate-pulse"></i>Prénom</th>
+                            <th class="py-4 px-6 text-left font-semibold"><i
+                                    class="fas fa-phone mr-2 text-green-400 animate-pulse"></i>Téléphone</th>
+                            <th class="py-4 px-6 text-left font-semibold"><i
+                                    class="fas fa-graduation-cap mr-2 text-purple-400 animate-pulse"></i>Formation</th>
+                            <th class="py-4 px-6 text-left font-semibold"><i
+                                    class="fas fa-envelope mr-2 text-yellow-400 animate-pulse"></i>Email</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -151,8 +155,11 @@ const getFormationTitre = (formationId: number) => {
                             <td class="py-4 px-6 text-gray-100 hover:text-green-300 transition-colors duration-200">{{
                                 apprenant.telephone }}</td>
                             <td class="py-4 px-6 text-gray-100 hover:text-purple-300 transition-colors duration-200">
-                                <span class="bg-purple-900 text-purple-300 px-2 py-1 rounded-full text-sm">{{
-                                    getFormationTitre(apprenant.formation_id) }}</span>
+                                <span
+                                    class="bg-purple-900 text-purple-300 px-2 py-1 rounded-full text-sm cursor-pointer hover:bg-purple-800 transition-colors duration-200"
+                                    @click="changeFormation(apprenant.formation_id)">
+                                    {{ getFormationTitre(apprenant.formation_id) }}
+                                </span>
                             </td>
                             <td class="py-4 px-6 text-gray-100 hover:text-yellow-300 transition-colors duration-200">{{
                                 apprenant.user.email }}</td>
@@ -160,8 +167,7 @@ const getFormationTitre = (formationId: number) => {
                     </tbody>
                 </table>
                 <div v-if="filteredApprenants.length === 0" class="p-6 text-center text-gray-400 animate-pulse">
-                    <i class="fas fa-exclamation-circle mr-2 text-xl animate-bounce"></i>
-                    Aucun apprenant trouvé
+                    <i class="fas fa-exclamation-circle mr-2 text-xl animate-bounce"></i> Aucun apprenant trouvé
                 </div>
             </div>
         </div>
@@ -173,7 +179,34 @@ select {
     background-image: none;
 }
 
-/* Animations personnalisées */
+.animate-slide-in {
+    animation: slideIn 0.6s ease-out;
+}
+
+.animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+}
+
+.animate-row-in {
+    animation: rowIn 0.5s ease-out forwards;
+}
+
+.animate-bounce-in {
+    animation: bounceIn 0.8s ease-out;
+}
+
+.animate-spin-slow {
+    animation: spinSlow 4s linear infinite;
+}
+
+.animate-number {
+    animation: number 0.5s ease-out;
+}
+
+.animate-text {
+    animation: text 0.5s ease-out;
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -262,33 +295,5 @@ select {
         opacity: 1;
         transform: scale(1);
     }
-}
-
-.animate-slide-in {
-    animation: slideIn 0.6s ease-out;
-}
-
-.animate-fade-up {
-    animation: fadeUp 0.6s ease-out forwards;
-}
-
-.animate-row-in {
-    animation: rowIn 0.5s ease-out forwards;
-}
-
-.animate-bounce-in {
-    animation: bounceIn 0.8s ease-out;
-}
-
-.animate-spin-slow {
-    animation: spinSlow 4s linear infinite;
-}
-
-.animate-number {
-    animation: number 0.5s ease-out;
-}
-
-.animate-text {
-    animation: text 0.5s ease-out;
 }
 </style>

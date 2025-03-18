@@ -13,6 +13,7 @@ $table->id();
 $table->foreignId('formateur_id')->constrained()->onDelete('cascade');
 $table->foreignId('discipline_id')->constrained()->onDelete('cascade');
             $table->foreignId('formation_id')->nullable()->constrained('formations')->onDelete('cascade');
+            $table->unique(['discipline_id', 'formateur_id']);
 $table->timestamps();
 });
 }

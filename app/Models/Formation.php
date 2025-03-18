@@ -41,4 +41,9 @@ class Formation extends Model
     {
         return $this->belongsToMany(Discipline::class);
     }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
 }

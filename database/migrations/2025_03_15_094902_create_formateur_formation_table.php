@@ -18,7 +18,8 @@ return new class extends Migration
                 ->onDelete('cascade'); // Supprime les enregistrements si la formation est supprimée
             $table->foreignId('formateur_id')
                 ->constrained()
-                ->onDelete('cascade'); // Supprime les enregistrements si le formateur est supprimé
+                ->onDelete('cascade');
+            $table->unique(['formateur_id', 'formation_id']); // Supprime les enregistrements si le formateur est supprimé
             $table->timestamps();
         });
     }

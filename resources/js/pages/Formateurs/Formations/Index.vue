@@ -2,7 +2,7 @@
 import { defineProps } from 'vue';
 import FormateurLayout from '@/components/MonLayout.vue';
 import { Link } from '@inertiajs/vue3';
-
+import TextLink from '@/components/TextLink.vue';
 const props = defineProps<{
     formations: Array<{
         id: number;
@@ -25,8 +25,8 @@ const props = defineProps<{
 
             <!-- Tableau stylisé -->
             <div
-                class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)]">
-                <table class="min-w-full">
+                class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] overflow-x-scroll">
+                <table class="min-w-full ">
                     <thead>
                         <tr class="bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200">
                             <th class="py-4 px-6 text-left font-semibold">
@@ -61,11 +61,11 @@ const props = defineProps<{
                                     formation.nbh_total }}</span>
                             </td>
                             <td class="py-4 px-6">
-                                <Link
+                                <TextLink :href="route('formateur.apprenants', { formation: formation.id })"
                                     class="flex items-center text-blue-400 hover:text-blue-300 transition-colors duration-200 group">
-                                <i class="fas fa-eye mr-2 group-hover:animate-bounce"></i>
-                                Voir Apprenants
-                                </Link>
+                                    <i class="fas fa-eye mr-2 group-hover:animate-bounce"></i>
+                                    Voir Apprenants
+                                </TextLink>
                             </td>
                         </tr>
                     </tbody>

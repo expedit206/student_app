@@ -33,51 +33,79 @@ class FormateurController extends Controller
         ]);
     }
 
-    public function showApprenants()
+    public function showApprenants(Request $request, Formation $formation = null)
     {
-       
         $formateurId = auth()->user()->id; // Récupérer l'ID du formateur authentifié
 
-        // Récupérer les formations du formateur
-        $formations = Formation::with('apprenants.user')
+        // Récupérer toutes les formations du formateur
+        $formations = Formation::whereHas('formateurs', function ($query) use ($formateurId) {
+            $query->where('formateur_id', $formateurId);
+        })->get(['id', 'titre']);
+
+        // Récupérer tous les apprenants liés aux formations du formateur
+        $apprenants = Formation::with('apprenants.user')
             ->whereHas('formateurs', function ($query) use ($formateurId) {
                 $query->where('formateur_id', $formateurId);
             })
-            ->get();
-
-        // Récupérer tous les apprenants liés à ces formations
-        $apprenants = $formations->flatMap(function ($formation) {
-            return $formation->apprenants; // Récupérer les apprenants pour chaque formation
-        });
+            ->get()
+            ->flatMap(function ($formation) {
+                return $formation->apprenants->map(function ($apprenant) use ($formation) {
+                    return [
+                        'id' => $apprenant->id,
+                        'nom' => $apprenant->nom,
+                        'prenom' => $apprenant->prenom,
+                        'telephone' => $apprenant->telephone,
+                        'formation_id' => $formation->id,
+                        'user' => ['email' => $apprenant->user->email],
+                    ];
+                });
+            })
+            ->unique('id')
+            ->values();
 
         return inertia('Formateurs/Apprenants/Index', [
             'apprenants' => $apprenants,
             'formations' => $formations,
+            'selectedFormation' => $formation ? $formation->id : null, // Optionnel, pour l'état initial
         ]);
- 
     }
+
+
+    
     public function showDisciplines()
-    {
-        $formateurId = auth()->user()->id; // Récupérer l'ID du formateur authentifié
+{
+    $formateurId = auth()->user()->id; // Récupérer l'ID du formateur authentifié
 
-        // Récupérer les disciplines associées au formateur
-        $disciplines = Discipline::with('formations')
-            ->whereHas('formateurs', function ($query) use ($formateurId) {
-                $query->where('formateur_id', $formateurId);
-            })
-            ->get();
-
-        // Récupérer les formations associées à ce formateur
-        $formations = Formation::whereHas('formateurs', function ($query) use ($formateurId) {
+    // Récupérer les disciplines associées au formateur avec les données du pivot
+    $disciplines = Discipline::with(['formations'])
+        ->whereHas('formateurs', function ($query) use ($formateurId) {
             $query->where('formateur_id', $formateurId);
-        })->get();
+        })
+        ->get()
+        ->map(function ($discipline) use ($formateurId) {
+            // Récupérer les formation_id associés au formateur pour cette discipline
+            $formationIds = $discipline->formateurs()
+                ->where('formateur_id', $formateurId)
+                ->pluck('discipline_formateur.formation_id')
+                ->toArray();
+            return [
+                'id' => $discipline->id,
+                'nom' => $discipline->nom,
+                'description' => $discipline->description,
+                'formation_ids' => $formationIds, // Liste des formation_id associés
+            ];
+        });
 
-        return inertia('Formateurs/Disciplines/Index', [
-            'disciplines' => $disciplines,
-            'formations' => $formations, // Passer les formations au composant
-        ]);
-    }
+    // Récupérer les formations associées à ce formateur
+    $formations = Formation::whereHas('formateurs', function ($query) use ($formateurId) {
+        $query->where('formateur_id', $formateurId);
+    })->get(['id', 'titre']); // Simplifié pour ne renvoyer que l'essentiel
 
+    return inertia('Formateurs/Disciplines/Index', [
+        'disciplines' => $disciplines,
+        'formations' => $formations,
+    ]);
+}
 
 
     public function attributionNotes(Request $request)

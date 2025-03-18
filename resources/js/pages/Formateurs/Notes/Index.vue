@@ -1,139 +1,178 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import FormateurLayout from '@/components/MonLayout.vue';
+import { router } from '@inertiajs/vue3';
+import {route} from 'ziggy-js';
 
 const props = defineProps<{
-    notes: Array<{
-        id: number;
-        etudiant: { nom: string };
-        note: number;
-        formation_id: number;
-        discipline_id: number;
-    }>;
     formations: Array<{
         id: number;
-        nom: string;
+        titre: string;
+        disciplines: Array<{ id: number; nom: string }>;
+        apprenants: Array<{ id: number; nom: string; prenom: string; notes: Record<number, number | null> }>;
     }>;
-    disciplines: Array<{
-        id: number;
-        nom: string;
-    }>;
+    selectedFormation: number | null;
 }>();
 
-const searchQuery = ref('');
-const selectedFormation = ref('');
-const selectedDiscipline = ref('');
+const selectedFormation = ref<number | null>(props.selectedFormation);
+const editingNote = ref<{ apprenantId: number; disciplineId: number; value: number | null } | null>(null);
 
-const filteredNotes = computed(() => {
-    const searchTerm = searchQuery.value.toLowerCase();
-    return props.notes.filter(note => {
-        const matchesFormation = selectedFormation.value ? note.formation_id === parseInt(selectedFormation.value) : true;
-        const matchesDiscipline = selectedDiscipline.value ? note.discipline_id === parseInt(selectedDiscipline.value) : true;
-        const matchesSearch = note.etudiant.nom.toLowerCase().includes(searchTerm);
-        return matchesFormation && matchesDiscipline && matchesSearch;
-    });
+// Sélectionne la première formation par défaut si aucune n'est sélectionnée
+onMounted(() => {
+    if (!selectedFormation.value && props.formations.length > 0) {
+        selectedFormation.value = props.formations[0].id;
+    }
 });
 
-const totalNotes = computed(() => filteredNotes.value.length);
+// Filtrer les apprenants et disciplines en fonction de la formation sélectionnée
+const currentFormation = computed(() => {
+    return props.formations.find(f => f.id === selectedFormation.value) || { apprenants: [], disciplines: [] };
+});
 
-const resetSearch = () => {
-    searchQuery.value = '';
-    selectedFormation.value = '';
-    selectedDiscipline.value = '';
+const changeFormation = (formationId: number | null) => {
+    selectedFormation.value = formationId; // Mise à jour locale uniquement
+};
+
+const startEditingNote = (apprenantId: number, disciplineId: number, currentNote: number | null) => {
+    editingNote.value = { apprenantId, disciplineId, value: currentNote };
+};
+
+const saveNote = (apprenantId: number, disciplineId: number) => {
+    if (editingNote.value && editingNote.value.value !== null && selectedFormation.value) {
+        router.post(route('formateur.updateNote'), {
+            apprenant_id: apprenantId,
+            formation_id: selectedFormation.value,
+            discipline_id: disciplineId,
+            note: editingNote.value.value,
+        }, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                // Mise à jour locale des notes après succès
+                const formation = props.formations.find(f => f.id === selectedFormation.value);
+                const apprenant = formation?.apprenants.find(a => a.id === apprenantId);
+                if (apprenant) {
+                    apprenant.notes[disciplineId] = editingNote.value!.value;
+                }
+                editingNote.value = null;
+            },
+            onError: () => { editingNote.value = null; },
+        });
+    } else {
+        editingNote.value = null;
+    }
 };
 </script>
 
 <template>
     <FormateurLayout>
         <div class="p-6 bg-gray-900 text-gray-100 min-h-screen overflow-hidden">
-            <!-- Header -->
             <h1 class="text-3xl font-extrabold mb-8 flex items-center animate-slide-in">
-                <i class="fas fa-book mr-3 text-blue-400 text-4xl animate-spin-slow"></i>
+                <i class="fas fa-star mr-3 text-yellow-400 text-4xl animate-spin-slow"></i>
                 Gestion des Notes
             </h1>
 
-            <!-- Sélection de Formation -->
-            <div class="mb-4">
-                <select v-model="selectedFormation" @change="resetSearch"
-                    class="w-full bg-gray-800 border border-gray-700 rounded-lg text-gray-100 p-2">
-                    <option value="">Toutes mes formations</option>
-                    <option v-for="formation in props.formations" :key="formation.id" :value="formation.id">
-                        {{ formation.nom }}
-                    </option>
-                </select>
-            </div>
-
-            <!-- Sélection de Discipline -->
-            <div class="mb-4">
-                <select v-model="selectedDiscipline" @change="resetSearch"
-                    class="w-full bg-gray-800 border border-gray-700 rounded-lg text-gray-100 p-2">
-                    <option value="">Toutes les disciplines</option>
-                    <option v-for="discipline in props.disciplines" :key="discipline.id" :value="discipline.id">
-                        {{ discipline.nom }}
-                    </option>
-                </select>
-            </div>
-
-            <!-- Statistiques Compactes -->
-            <div class="grid grid-cols-1 gap-4 mb-8">
-                <div
-                    class="bg-gray-800 rounded-lg shadow-lg p-4 flex items-center justify-between transform hover:scale-105 transition-all duration-300 animate-bounce-in">
-                    <div class="flex items-center">
-                        <i class="fas fa-star text-2xl text-blue-400 mr-3 animate-pulse"></i>
-                        <div>
-                            <p class="text-xs text-gray-400">Total Notes</p>
-                            <h2 class="text-lg font-bold text-white animate-number">{{ totalNotes }}</h2>
-                        </div>
-                    </div>
+            <!-- Sélection de la formation -->
+            <div class="mb-8 animate-fade-up">
+                <div class="relative max-w-md">
+                    <i
+                        class="fas fa-graduation-cap absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 animate-pulse"></i>
+                    <select v-model="selectedFormation" @change="changeFormation(selectedFormation)"
+                        class="w-full pl-12 pr-10 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none shadow-md hover:shadow-xl transition-all duration-300 hover:bg-gray-700">
+                        <option :value="null">Sélectionnez une formation</option>
+                        <option v-for="formation in props.formations" :key="formation.id" :value="formation.id">
+                            {{ formation.titre }}
+                        </option>
+                    </select>
+                    <i
+                        class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 animate-bounce pointer-events-none"></i>
                 </div>
             </div>
 
-            <!-- Filtres -->
-            <div class="relative mb-8 animate-fade-up">
-                <i
-                    class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 animate-pulse"></i>
-                <input v-model="searchQuery" type="text" placeholder="Rechercher par nom d'étudiant"
-                    class="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-md hover:shadow-xl transition-all duration-300 hover:bg-gray-700" />
-            </div>
-
-            <!-- Table -->
-            <div
+            <!-- Tableau des notes -->
+            <div v-if="selectedFormation"
                 class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)]">
                 <table class="min-w-full">
                     <thead>
                         <tr class="bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200 animate-slide-in">
-                            <th class="py-4 px-6 text-left font-semibold">
-                                <i class="fas fa-user mr-2 text-blue-400 animate-pulse"></i>Nom de l'Étudiant
-                            </th>
-                            <th class="py-4 px-6 text-left font-semibold">
-                                <i class="fas fa-star mr-2 text-blue-400 animate-pulse"></i>Note
+                            <th class="py-4 px-6 text-left font-semibold sticky left-0 bg-gray-800 z-10">Apprenant</th>
+                            <th v-for="discipline in currentFormation.disciplines" :key="discipline.id"
+                                class="py-4 px-6 text-left font-semibold">
+                                {{ discipline.nom }}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(note, index) in filteredNotes" :key="note.id"
+                        <tr v-for="(apprenant, index) in currentFormation.apprenants" :key="apprenant.id"
                             class="border-b border-gray-700 hover:bg-gray-700 transition-all duration-300 animate-row-in"
-                            :style="{ animationDelay: `${0.7 + index * 0.1}s` }">
-                            <td class="py-4 px-6 text-gray-100 hover:text-blue-300 transition-colors duration-200">
-                                {{ note.etudiant.nom }}
-                            </td>
-                            <td class="py-4 px-6 text-gray-300 hover:text-blue-300 transition-colors duration-200">
-                                {{ note.note }}
+                            :style="{ animationDelay: `${0.1 + index * 0.1}s` }">
+                            <td class="py-4 px-6 text-gray-100 sticky left-0 bg-gray-800 z-10">{{ apprenant.prenom }} {{
+                                apprenant.nom }}</td>
+                            <td v-for="discipline in currentFormation.disciplines" :key="discipline.id"
+                                class="py-4 px-6 text-gray-100">
+                                <div v-if="editingNote && editingNote.apprenantId === apprenant.id && editingNote.disciplineId === discipline.id"
+                                    class="flex items-center gap-2">
+                                    <input v-model="editingNote.value" type="number" min="0" max="20" step="0.01"
+                                        class="w-20 p-2 bg-gray-700 border border-gray-600 rounded text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        @blur="saveNote(apprenant.id, discipline.id)"
+                                        @keyup.enter="saveNote(apprenant.id, discipline.id)" ref="noteInput"
+                                        autofocus />
+                                    <button @click="saveNote(apprenant.id, discipline.id)"
+                                        class="text-green-400 hover:text-green-300">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button @click="editingNote = null" class="text-red-400 hover:text-red-300">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <span v-else class="cursor-pointer"
+                                    @click="startEditingNote(apprenant.id, discipline.id, apprenant.notes[discipline.id] || null)">
+                                    {{ apprenant.notes[discipline.id] !== undefined && apprenant.notes[discipline.id]
+                                        !== null ? apprenant.notes[discipline.id] + '/20' : 'Non noté' }}
+                                </span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div v-if="filteredNotes.length === 0" class="p-6 text-center text-gray-400 animate-pulse">
-                    <i class="fas fa-exclamation-circle mr-2 text-xl animate-bounce"></i>
-                    Aucune note trouvée
+                <div v-if="currentFormation.apprenants.length === 0"
+                    class="p-6 text-center text-gray-400 animate-pulse">
+                    <i class="fas fa-exclamation-circle mr-2 text-xl animate-bounce"></i> Aucun apprenant trouvé pour
+                    cette formation
                 </div>
+            </div>
+            <div v-else class="text-center text-gray-400 animate-pulse">
+                <i class="fas fa-info-circle mr-2 text-xl animate-bounce"></i> Veuillez sélectionner une formation pour
+                voir les notes
             </div>
         </div>
     </FormateurLayout>
 </template>
 
 <style scoped>
-/* Animations personnalisées */
+select {
+    background-image: none;
+}
+
+.animate-slide-in {
+    animation: slideIn 0.6s ease-out;
+}
+
+.animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+}
+
+.animate-row-in {
+    animation: rowIn 0.5s ease-out forwards;
+}
+
+.animate-bounce-in {
+    animation: bounceIn 0.8s ease-out;
+}
+
+.animate-spin-slow {
+    animation: spinSlow 4s linear infinite;
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -198,41 +237,5 @@ const resetSearch = () => {
     to {
         transform: rotate(360deg);
     }
-}
-
-@keyframes number {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-slide-in {
-    animation: slideIn 0.6s ease-out;
-}
-
-.animate-fade-up {
-    animation: fadeUp 0.6s ease-out forwards;
-}
-
-.animate-row-in {
-    animation: rowIn 0.5s ease-out forwards;
-}
-
-.animate-bounce-in {
-    animation: bounceIn 0.8s ease-out;
-}
-
-.animate-spin-slow {
-    animation: spinSlow 4s linear infinite;
-}
-
-.animate-number {
-    animation: number 0.5s ease-out;
 }
 </style>

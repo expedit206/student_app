@@ -42,17 +42,21 @@ Route::middleware(['auth', 'userRole:formateur'])->group(function () {
     
     Route::get('mes-formations', [App\Http\Controllers\Formateur\FormateurController::class, 'mes_formations'])->name('formateur.formations');
 
-    Route::get('mes-apprenants', [App\Http\Controllers\Formateur\FormateurController::class, 'showApprenants'])->name('formateur.apprenants');
+    Route::get('mes-apprenants/{formation?}', [App\Http\Controllers\Formateur\FormateurController::class, 'showApprenants'])->name('formateur.apprenants');
     
     Route::get('/mes-disciplines', [App\Http\Controllers\Formateur\FormateurController::class, 'showDisciplines'])->name('formateur.disciplines');
 
 
     /******* note */
     // Route::get('/notes/add/{formationId}/{disciplineId}', [NoteController::class, 'showAddNoteForm'])->name('notes.add');
-    
-    Route::post('/notes', [NoteController::class, 'storeNote'])->name('notes.store');
 
-    Route::get('/notes', [NoteController::class, 'index'])->name('formateur.notes');
+    Route::get('/formateur/notes/{formation?}', [NoteController::class, 'showNotes'])
+        ->name('formateur.notes')
+        ->middleware('auth');
+
+    Route::post('/formateur/notes/update', [NoteController::class, 'updateNote'])
+        ->name('formateur.updateNote')
+        ->middleware('auth');
 });
 
 

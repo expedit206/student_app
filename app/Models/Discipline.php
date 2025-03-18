@@ -24,4 +24,8 @@ class Discipline extends Model
     {
         return $this->belongsToMany(Formateur::class, 'discipline_formateur');
     }
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
 }
