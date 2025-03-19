@@ -1,147 +1,199 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { User } from '@/types';
-import { usePage } from '@inertiajs/vue3';
-import { Link } from '@inertiajs/vue3';
+import { ref, onMounted } from 'vue';
+import MonLayout from '@/components/MonLayout.vue';
+import { router } from 'ziggy-js';
+import { Bar } from 'vue-chartjs';
+import {
+    Chart as ChartJS,
+    Title,
+    Tooltip,
+    Legend,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+} from 'chart.js';
 
-const dashboardData = ref({
-    totalCourses: 5, // Total des cours auxquels l'étudiant est inscrit
-    totalAssignments: 10, // Total des devoirs
-    recentActivities: [
-        { id: 1, type: 'Devoir soumis', description: 'Mathématiques: Calcul différentiel', date: '2025-03-13 09:15' },
-        { id: 2, type: 'Nouveau cours', description: 'Introduction à la Programmation', date: '2025-03-12 14:30' },
-        { id: 3, type: 'Note reçue', description: 'Physique: 88%', date: '2025-03-11 10:00' }
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+
+const props = defineProps<{
+    dashboardData: {
+        totalFormations: number;
+        totalNotes: number;
+        moyenneGenerale: number;
+        recentActivities: Array<{ id: number; type: string; description: string; date: string }>;
+        formations: Array<{ id: number; name: string; formateur: string; moyenne: number; notes_count: number }>;
+    };
+}>();
+
+console.log(props.dashboardData.formations);
+
+// Débogage frontend
+onMounted(() => {
+    console.log('Props reçus:', props.dashboardData);
+    console.log('Formations:', props.dashboardData.formations);
+});
+// Données du graphique (identique à la logique du formateur)
+const chartData = ref({
+    labels: props.dashboardData.formations.map(f => f.name),
+    datasets: [
+        {
+            label: 'Moyenne (%)',
+            data: props.dashboardData.formations.map(f => f.moyenne),
+            backgroundColor: props.dashboardData.formations.map(f =>
+                f.moyenne >= 80 ? '#34D399' : f.moyenne >= 60 ? '#FBBF24' : '#F87171'
+            ),
+            borderColor: '#ffffff',
+            borderWidth: 1,
+        },
     ],
-    courses: [
-        { name: 'Informatique', credits: 3, grade: 'A' },
-        { name: 'Mathématiques', credits: 4, grade: 'B+' },
-        { name: 'Physique', credits: 4, grade: 'A-' },
-    ]
 });
 
-const showSidebar = ref(false);
-const toggleSidebar = () => { showSidebar.value = !showSidebar.value };
-
-const page = usePage();
-const user = page.props.auth.user as User;
+const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: { display: true, position: 'top', labels: { color: '#ffffff' } },
+        tooltip: { backgroundColor: '#1F2937', titleColor: '#ffffff', bodyColor: '#ffffff' },
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+            max: 100,
+            title: { display: true, text: 'Pourcentage (%)', color: '#ffffff' },
+            ticks: { color: '#ffffff' },
+            grid: { color: '#374151' },
+        },
+        x: {
+            title: { display: true, text: 'Formation', color: '#ffffff' },
+            ticks: { color: '#ffffff' },
+            grid: { display: false },
+        },
+    },
+};
 </script>
 
 <template>
-    <div class="h-screen bg-gray-900 text-gray-100 overflow-hidden">
-        <!-- Header -->
-        <header class="bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg">
-            <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-                <div class="flex items-center">
-                    <i class="fas fa-user-graduate text-2xl mr-3 text-blue-400"></i>
-                    <h1 class="text-xl font-bold">CFPCa - Tableau de Bord Étudiant</h1>
+    <MonLayout>
+        <div class="p-6 bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100 min-h-screen">
+            <!-- En-tête -->
+            <header class="mb-6 flex items-center justify-between animate-fade-in">
+                <h1 class="text-4xl font-bold text-white flex items-center">
+                    <i class="fas fa-tachometer-alt mr-3 text-teal-400 text-3xl animate-pulse"></i>
+                    Mon Tableau de Bord
+                </h1>
+                <div class="text-sm text-gray-400">Mis à jour le {{ new Date().toLocaleDateString() }}</div>
+            </header>
+
+            <!-- Statistiques -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                <div
+                    class="bg-gradient-to-r from-teal-600 to-teal-500 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-teal-200">Formation Suivie</p>
+                            <h2 class="text-4xl font-extrabold text-white">{{ props.dashboardData.totalFormations }}
+                            </h2>
+                        </div>
+                        <i class="fas fa-book text-5xl text-teal-300 opacity-75 animate-spin-slow"></i>
+                    </div>
                 </div>
-                <button @click="toggleSidebar" class="lg:hidden">
-                    <i class="fas fa-bars text-xl text-gray-300"></i>
-                </button>
+                <div
+                    class="bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-indigo-200">Notes Reçues</p>
+                            <h2 class="text-4xl font-extrabold text-white">{{ props.dashboardData.totalNotes }}</h2>
+                        </div>
+                        <i class="fas fa-star text-5xl text-indigo-300 opacity-75 animate-pulse"></i>
+                    </div>
+                </div>
+                <div
+                    class="bg-gradient-to-r from-purple-600 to-purple-500 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-purple-200">Moyenne Générale</p>
+                            <h2 class="text-4xl font-extrabold text-white">{{ props.dashboardData.moyenneGenerale }}%
+                            </h2>
+                        </div>
+                        <i class="fas fa-chart-line text-5xl text-purple-300 opacity-75 animate-bounce"></i>
+                    </div>
+                </div>
             </div>
-        </header>
 
-        <div class="flex h-[calc(100vh-72px)]">
-            <!-- Sidebar -->
-            <aside :class="{ 'translate-x-0': showSidebar, '-translate-x-full': !showSidebar }"
-                class="fixed lg:static lg:translate-x-0 w-64 h-full bg-gray-800 shadow-xl transition-transform duration-300 overflow-y-auto">
-                <nav class="mt-8">
-                    <a href="#"
-                        class="flex items-center px-6 py-3 text-blue-400 bg-gray-700 border-r-4 border-blue-400 hover:bg-gray-600 transition-colors">
-                        <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
-                    </a>
-                    <a href="#" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
-                        <i class="fas fa-book mr-3"></i>Ma Formation
-                    </a>
-                    <a href="#" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
-                        <i class="fas fa-book mr-3"></i>Mes disciplines 
-                    </a>
-                    <a href="#" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
-                        <i class="fas fa-file-alt mr-3"></i>Devoirs
-                    </a>
-                </nav>
-                <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <button
-                            class="flex items-center justify-between w-full px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors">
-                            <span class="flex items-center">
-                                <i class="fas fa-user mr-2"></i> Profil
-                            </span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <Link class="block w-full" :href="route('profile.edit')" as="button">Settings</Link>
-                        <Link class="block w-full" method="post" :href="route('logout')" as="button">Log out</Link>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </aside>
-
-            <!-- Main Content -->
-            <main class="flex-1 p-6 overflow-hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                    <div class="bg-gray-800 rounded-xl shadow-md p-6 transition-transform transform hover:scale-105">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-400">Cours Inscrits</p>
-                                <h2 class="text-3xl font-bold text-white">{{ dashboardData.totalCourses }}</h2>
-                            </div>
-                            <i class="fas fa-book text-3xl text-blue-400"></i>
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 rounded-xl shadow-md p-6 transition-transform transform hover:scale-105">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-400">Devoirs</p>
-                                <h2 class="text-3xl font-bold text-white">{{ dashboardData.totalAssignments }}</h2>
-                            </div>
-                            <i class="fas fa-file-alt text-3xl text-blue-400"></i>
-                        </div>
-                    </div>
+            <!-- Graphique pleine largeur -->
+            <div class="bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                    <i class="fas fa-chart-bar mr-2 text-teal-400"></i> Ma Performance
+                </h3>
+                <div class="h-80">
+                    <Bar :data="chartData" :options="chartOptions" />
                 </div>
+            </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100%-12rem)]">
-                    <div
-                        class="bg-gray-800 rounded-xl shadow-md p-6 overflow-y-auto transition-transform transform hover:scale-105">
-                        <h3 class="text-xl font-semibold text-white mb-4">
-                            <i class="fas fa-clock mr-2 text-blue-400"></i>Activités Récentes
-                        </h3>
-                        <div class="space-y-4">
-                            <div v-for="activity in dashboardData.recentActivities" :key="activity.id"
-                                class="p-3 bg-gray-700 rounded-lg transition-transform transform hover:scale-105">
-                                <p class="text-sm text-gray-300">{{ activity.type }}</p>
+            <!-- Sections principales -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Activités Récentes -->
+                <div class="bg-gray-800 rounded-xl shadow-lg p-6 overflow-y-auto h-[calc(100vh-500px)]">
+                    <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                        <i class="fas fa-clock mr-2 text-teal-400"></i> Activités Récentes
+                    </h3>
+                    <div v-if="props.dashboardData.recentActivities.length" class="space-y-3">
+                        <div v-for="activity in props.dashboardData.recentActivities" :key="activity.id"
+                            class="p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-teal-300 font-medium">{{ activity.type }}</p>
                                 <p class="text-white">{{ activity.description }}</p>
-                                <span class="text-xs text-gray-400">{{ activity.date }}</span>
                             </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ activity.date }}</span>
                         </div>
                     </div>
-
-                    <div
-                        class="bg-gray-800 rounded-xl shadow-md p-6 overflow-y-auto transition-transform transform hover:scale-105">
-                        <h3 class="text-xl font-semibold text-white mb-4">
-                            <i class="fas fa-graduation-cap mr-2 text-blue-400"></i>Cours
-                        </h3>
-                        <div class="space-y-4">
-                            <div v-for="course in dashboardData.courses" :key="course.name"
-                                class="p-3 bg-gray-700 rounded-lg transition-transform transform hover:scale-105">
-                                <h4 class="font-medium text-white">{{ course.name }}</h4>
-                                <p class="text-sm text-gray-300">
-                                    Crédits: {{ course.credits }} | Note: {{ course.grade }}
-                                </p>
-                            </div>
-                        </div>
+                    <div v-else class="text-center text-gray-400 py-6">
+                        <i class="fas fa-info-circle mr-2 text-xl"></i> Aucune activité récente
                     </div>
                 </div>
-            </main>
+
+                <!-- Ma Formation -->
+                <div class="bg-gray-800 rounded-xl shadow-lg p-6 overflow-y-auto h-[calc(100vh-500px)]">
+                    <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                        <i class="fas fa-book-open mr-2 text-teal-400"></i> Ma Formation
+                    </h3>
+                    <ul class="space-y-3">
+                        <li v-if="props.dashboardData.formations && props.dashboardData.formations.length > 0"
+                            class="p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all flex items-center justify-between cursor-pointer"
+                            @click="$router.push({ name: 'apprenant.notes', params: { formation: props.dashboardData.formations[0].id } })">
+                            <div>
+                                <p class="text-sm text-teal-300 font-medium">
+                                    {{ props.dashboardData.formations[0].name || 'Nom non disponible' }}
+                                </p>
+                                <p class="text-white">Formateur: {{ props.dashboardData.formations[0].formateur || 'Non assigné' }}</p>
+                            </div>
+                            <span class="text-sm text-white">Moyenne: {{ props.dashboardData.formations[0].moyenne || 0
+                                }}%</span>
+                        </li>
+                        <li v-else class="text-center text-gray-400 py-6">
+                            <i class="fas fa-info-circle mr-2 text-xl"></i> Aucune formation assignée
+                        </li>
+                    </ul>
+                </div>
+                
+            </div>
         </div>
-    </div>
+    </MonLayout>
 </template>
 
-<style>
-@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+<style scoped>
+/* Ajoutez des styles personnalisés ici */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease;
+}
 
-body {
-    font-family: 'Arial', sans-serif;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 </style>

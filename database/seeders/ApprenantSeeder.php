@@ -29,8 +29,8 @@ class ApprenantSeeder extends Seeder
         // Créez un enregistrement pour cet étudiant dans la table Apprenants
         Apprenant::create([
             'user_id' => $specialApprenant->id, // Clé étrangère
-            'nom' => 'Admin',
-            'prenom' => 'Admin',
+            'nom' => 'Apprenant_special',
+            'prenom' => 'Apprenant_special',
             'date_naissance' => now()->subYears(rand(18, 25)), // Âge aléatoire
             'adresse' => 'Adresse spéciale',
             'telephone' => '0600000000', // Numéro de téléphone fictif

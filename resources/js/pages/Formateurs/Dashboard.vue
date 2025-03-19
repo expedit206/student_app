@@ -1,142 +1,184 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import FormateurLayout from '@/components/MonLayout.vue';
-import {route} from 'ziggy-js';
+import { Bar } from 'vue-chartjs';
+import {
+    Chart as ChartJS,
+    Title,
+    Tooltip,
+    Legend,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+} from 'chart.js';
 
-defineProps<{
-  dashboardData: {
-    totalFormations: number;
-    totalApprenants: number;
-    recentActivities: Array<{ id: number; type: string; description: string; date: string }>;
-    formations: Array<{ id: number; name: string; apprenants: number; moyenne: number }>;
-  };
+// Enregistrer les composants Chart.js
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+
+const props = defineProps<{
+    dashboardData: {
+        totalFormations: number;
+        totalApprenants: number;
+        recentActivities: Array<{ id: number; type: string; description: string; date: string }>;
+        formations: Array<{ id: number; name: string; apprenants: number; moyenne: number }>;
+    };
 }>();
+
+// Données du graphique
+const chartData = ref({
+    labels: props.dashboardData.formations.map(f => f.name),
+    datasets: [
+        {
+            label: 'Moyenne des notes (%)',
+            data: props.dashboardData.formations.map(f => f.moyenne),
+            backgroundColor: props.dashboardData.formations.map(f =>
+                f.moyenne >= 80 ? '#34D399' : f.moyenne >= 60 ? '#FBBF24' : '#F87171'
+            ),
+            borderColor: '#ffffff',
+            borderWidth: 1,
+        },
+    ],
+});
+
+const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: { display: true, position: 'top', labels: { color: '#ffffff' } },
+        tooltip: { backgroundColor: '#1F2937', titleColor: '#ffffff', bodyColor: '#ffffff' },
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+            max: 100,
+            title: { display: true, text: 'Pourcentage (%)', color: '#ffffff' },
+            ticks: { color: '#ffffff' },
+            grid: { color: '#374151' },
+        },
+        x: {
+            title: { display: true, text: 'Formations', color: '#ffffff' },
+            ticks: { color: '#ffffff' },
+            grid: { display: false },
+        },
+    },
+};
 </script>
 
 <template>
-  <FormateurLayout>
-    <div class="p-6 bg-gray-900 text-gray-100 min-h-screen overflow-hidden">
-      <h1 class="text-3xl font-extrabold mb-6 flex items-center animate-slide-in">
-        <i class="fas fa-tachometer-alt mr-3 text-blue-400 text-4xl animate-pulse"></i>
-        Tableau de Bord
-      </h1>
+    <FormateurLayout>
+        <div class="p-6 bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100 min-h-screen">
+            <!-- En-tête -->
+            <header class="mb-6 flex items-center justify-between animate-fade-in">
+                <h1 class="text-4xl font-bold text-white flex items-center">
+                    <i class="fas fa-tachometer-alt mr-3 text-indigo-400 text-3xl animate-pulse"></i>
+                    Tableau de Bord
+                </h1>
+                <div class="text-sm text-gray-400">Mis à jour le {{ new Date().toLocaleDateString() }}</div>
+            </header>
 
-      <!-- Statistiques -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div class="bg-gray-800 rounded-xl shadow-md p-6 transition-all hover:shadow-xl hover:bg-gray-700">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-400">Formations Gérées</p>
-              <h2 class="text-3xl font-bold text-white">{{ dashboardData.totalFormations }}</h2>
+            <!-- Statistiques -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                <div
+                    class="bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-indigo-200">Formations Gérées</p>
+                            <h2 class="text-4xl font-extrabold text-white">{{ props.dashboardData.totalFormations }}
+                            </h2>
+                        </div>
+                        <i class="fas fa-book text-5xl text-indigo-300 opacity-75 animate-spin-slow"></i>
+                    </div>
+                </div>
+                <div
+                    class="bg-gradient-to-r from-teal-600 to-teal-500 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-teal-200">Apprenants Inscrits</p>
+                            <h2 class="text-4xl font-extrabold text-white">{{ props.dashboardData.totalApprenants }}
+                            </h2>
+                        </div>
+                        <i class="fas fa-users text-5xl text-teal-300 opacity-75 animate-bounce"></i>
+                    </div>
+                </div>
+                <div
+                    class="bg-gradient-to-r from-purple-600 to-purple-500 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-purple-200">Notes Récentes</p>
+                            <h2 class="text-4xl font-extrabold text-white">{{
+                                props.dashboardData.recentActivities.length }}</h2>
+                        </div>
+                        <i class="fas fa-star text-5xl text-purple-300 opacity-75 animate-pulse"></i>
+                    </div>
+                </div>
             </div>
-            <i class="fas fa-book text-3xl text-blue-400 animate-bounce"></i>
-          </div>
-        </div>
-        <div class="bg-gray-800 rounded-xl shadow-md p-6 transition-all hover:shadow-xl hover:bg-gray-700">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-400">Apprenants Inscrits</p>
-              <h2 class="text-3xl font-bold text-white">{{ dashboardData.totalApprenants }}</h2>
-            </div>
-            <i class="fas fa-users text-3xl text-blue-400 animate-bounce"></i>
-          </div>
-        </div>
-      </div>
 
-      <!-- Sections principales -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Activités Récentes -->
-        <div class="bg-gray-800 rounded-xl shadow-md p-6 overflow-y-auto max-h-[400px] transition-all hover:shadow-xl">
-          <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
-            <i class="fas fa-clock mr-2 text-blue-400"></i> Activités Récentes
-          </h3>
-          <div v-if="dashboardData.recentActivities.length" class="space-y-4">
-            <div
-              v-for="activity in dashboardData.recentActivities"
-              :key="activity.id"
-              class="p-3 bg-gray-700 rounded-lg transition-all hover:bg-gray-600 hover:shadow-md"
-            >
-              <p class="text-sm text-gray-300">{{ activity.type }}</p>
-              <p class="text-white font-medium">{{ activity.description }}</p>
-              <span class="text-xs text-gray-400">{{ activity.date }}</span>
+            <!-- Graphique pleine largeur -->
+            <div class="bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                    <i class="fas fa-chart-bar mr-2 text-indigo-400"></i> Performance des Formations
+                </h3>
+                <div class="h-80">
+                    <Bar :data="chartData" :options="chartOptions" />
+                </div>
             </div>
-          </div>
-          <div v-else class="text-center text-gray-400 py-4">
-            <i class="fas fa-info-circle mr-2"></i> Aucune activité récente
-          </div>
-        </div>
 
-        <!-- Mes Formations -->
-        <div class="bg-gray-800 rounded-xl shadow-md p-6 overflow-y-auto max-h-[400px] transition-all hover:shadow-xl">
-          <a :href="route('formateur.formations')" class="text-xl font-semibold text-white mb-4 flex items-center hover:text-blue-400 transition-colors">
-            <i class="fas fa-graduation-cap mr-2 text-blue-400"></i> Mes Formations
-          </a>
-          <div v-if="dashboardData.formations.length" class="space-y-4">
-            <div
-              v-for="formation in dashboardData.formations"
-              :key="formation.id"
-              class="p-3 bg-gray-700 rounded-lg transition-all hover:bg-gray-600 hover:shadow-md cursor-pointer"
-              @click="$router.get(route('formateur.notes', { formation: formation.id }))"
-            >
-              <h4 class="font-medium text-white">{{ formation.name }}</h4>
-              <div class="flex justify-between items-center">
-                <p class="text-sm text-gray-300">Apprenants: {{ formation.apprenants }}</p>
-                <p class="text-sm" :class="{
-                  'text-green-400': formation.moyenne >= 80,
-                  'text-yellow-400': formation.moyenne >= 60 && formation.moyenne < 80,
-                  'text-red-400': formation.moyenne < 60,
-                }">
-                  Moyenne: {{ formation.moyenne }}%
-                </p>
-              </div>
+            <!-- Sections principales -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Activités Récentes -->
+                <div class="bg-gray-800 rounded-xl shadow-lg p-6 overflow-y-auto h-[calc(100vh-500px)]">
+                    <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                        <i class="fas fa-clock mr-2 text-indigo-400"></i> Activités Récentes
+                    </h3>
+                    <div v-if="props.dashboardData.recentActivities.length" class="space-y-3">
+                        <div v-for="activity in props.dashboardData.recentActivities" :key="activity.id"
+                            class="p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-indigo-300 font-medium">{{ activity.type }}</p>
+                                <p class="text-white">{{ activity.description }}</p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ activity.date }}</span>
+                        </div>
+                    </div>
+                    <div v-else class="text-center text-gray-400 py-6">
+                        <i class="fas fa-info-circle mr-2 text-xl"></i> Aucune activité récente
+                    </div>
+                </div>
+
+                <!-- Mes Formations -->
+                <div class="bg-gray-800 rounded-xl shadow-lg p-6 overflow-y-auto h-[calc(100vh-500px)]">
+                    <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                        <i class="fas fa-book-open mr-2 text-indigo-400"></i> Mes Formations
+                    </h3>
+                    <ul class="space-y-3">
+                        <li v-for="formation in props.dashboardData.formations" :key="formation.id"
+                            class="p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-indigo-300 font-medium">{{ formation.name }}</p>
+                                <p class="text-white">Apprenants: {{ formation.apprenants }}</p>
+                            </div>
+                            <span class="text-sm text-white">Moyenne: {{ formation.moyenne }}%</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-          </div>
-          <div v-else class="text-center text-gray-400 py-4">
-            <i class="fas fa-info-circle mr-2"></i> Aucune formation disponible
-          </div>
         </div>
-      </div>
-    </div>
-  </FormateurLayout>
+    </FormateurLayout>
 </template>
 
 <style scoped>
-@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
-
-body {
-  font-family: 'Arial', sans-serif;
+/* Ajoutez des styles personnalisés ici */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease;
 }
 
-.animate-slide-in {
-  animation: slideIn 0.6s ease-out;
-}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
 
-.animate-pulse {
-  animation: pulse 2s infinite;
-}
-
-.animate-bounce {
-  animation: bounce 1s infinite;
-}
-
-.max-h-[400px] {
-  max-height: 400px;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-10px); }
-  60% { transform: translateY(-5px); }
+    to {
+        opacity: 1;
+    }
 }
 </style>

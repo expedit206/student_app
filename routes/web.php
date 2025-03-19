@@ -3,19 +3,19 @@
 use Inertia\Inertia;
 use App\Models\Formateur;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\ApprenantController;
 use App\Http\Controllers\Formateur\NoteController;
+use App\Http\Controllers\Admin\ApprenantController;
 use App\Http\Controllers\Admin\FormateurController;
 use App\Http\Controllers\Admin\FormationController;
 use App\Http\Controllers\Admin\DisciplineController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\ManageAssociationController;
-use App\Http\Controllers\apprenant\ApprenantDashboardController;
+use App\Http\Controllers\Apprenant\ApprenantDashboardController;
 use App\Http\Controllers\Formateur\FormateurDashboardController;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome');
-})->name('hom');
+// Route::get('/', function () {
+//     return Inertia::render('Welcome');
+// })->name('hom');
 
 // Route::get('dashboard', function () {
 //     return Inertia::render('MonDashboard');
@@ -32,11 +32,11 @@ Route::get('/', function () {
 
 
 
+Route::get('/', function () {
+    return Inertia::render('Welcome');
+})->name('dashboard');
 Route::middleware(['auth', 'userRole:formateur'])->group(function () {
 
-        Route::get('/', function () {
-            return Inertia::render('Welcome');
-        })->name('dashboard');
     
     Route::get('formateur/dashboard', [FormateurDashboardController::class, 'dashboard'])->name('formateur.dashboard');
     
@@ -61,7 +61,14 @@ Route::middleware(['auth', 'userRole:formateur'])->group(function () {
 
 
 Route::middleware(['auth', 'userRole:apprenant'])->group(function () {
-    Route::get('apprenant/dashboard', [ApprenantDashboardController::class, 'dashboard'])->name('apprenants.dashboard');
+    Route::get('apprenant/dashboard', [ApprenantDashboardController::class, 'dashboard'])->name('apprenant.dashboard');
+
+    Route::get('/apprenant/formations', [ApprenantsController::class, 'formations'])->name('apprenant.formations');
+    Route::get('/apprenant/notes/{formation}', [ApprenantsController::class, 'notes'])->name('apprenant.notes');
+
+    Route::get('/apprenant/notes/{formation}', [App\Http\Controllers\ApprenantNoteController::class, 'notes'])
+        ->name('apprenant.notes');
+
 });
 
 
