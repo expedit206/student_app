@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Formateur;
 
 use App\Models\Note;
+use App\Models\Apprenant;
 use App\Models\Formation;
 use App\Models\Discipline;
 use Illuminate\Http\Request;
@@ -78,7 +79,15 @@ class NoteController extends Controller
             return redirect()->back()->withErrors(['discipline_id' => 'Cette discipline n’est pas associée à la formation.']);
         }
 
-        Note::updateOrCreate(
+        // Vérifier si la note existe déjà pour distinguer création et mise à jour
+        $existingNote = Note::where([
+            'apprenant_id' => $request->apprenant_id,
+            'formation_id' => $request->formation_id,
+            'discipline_id' => $request->discipline_id,
+        ])->first();
+
+        // Mettre à jour ou créer la note
+        $note = Note::updateOrCreate(
             [
                 'apprenant_id' => $request->apprenant_id,
                 'formation_id' => $request->formation_id,
@@ -86,6 +95,29 @@ class NoteController extends Controller
             ],
             ['note' => $request->note]
         );
+
+        // Récupérer l'apprenant et son utilisateur associé
+        $apprenant = Apprenant::find($request->apprenant_id);
+        $user = $apprenant->user;
+
+        // Charger la discipline pour le message
+        $discipline = $formation->disciplines()->where('discipline_id', $request->discipline_id)->first();
+
+        // Générer un message en fonction de la création ou mise à jour
+        $message = $existingNote
+            ? "Votre note pour {$discipline->nom} a été mise à jour : {$request->note}/20"
+            : "Nouvelle note reçue pour {$discipline->nom} : {$request->note}/20";
+
+        // Créer la notification
+        $user->notifications()->create([
+            'type' => 'note_update',
+            'message' => $message,
+            'data' => [
+                'note_id' => $note->id,
+                'formation_id' => $formation->id,
+                'discipline_id' => $discipline->id,
+            ],
+        ]);
 
         return redirect()->back()->with('success', 'Note mise à jour avec succès.');
     }

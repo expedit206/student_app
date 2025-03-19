@@ -12,48 +12,46 @@ class ApprenantDashboardController extends Controller
 {
     public function dashboard(Request $request)
     {
-        $apprenant = auth()->user(); // Apprenant connecté
-        $apprenantId = $apprenant->id;
+        $user = auth()->user();
+        $apprenant = $user->apprenant;
+        $apprenantId = $apprenant ? $apprenant->id : null;
 
-        // Débogage : Vérifier l'ID de la formation
-        \Log::info('Apprenant ID: ' . $apprenantId . ', Formation ID: ' . $apprenant->formation_id);
-
-        // Récupérer la formation de l'apprenant (via formation_id)
-        $formation = Formation::with(['notes' => function ($query) use ($apprenantId) {
-            $query->where('apprenant_id', $apprenantId);
-        }, 'formateurs'])
-            ->find($apprenant->formation_id);
-        dd($formation);
-// icicicicicici selection de la formation erroné
-        // Débogage : Vérifier si la formation est trouvée
-        if (!$formation) {
-            \Log::info('Aucune formation trouvée pour cet apprenant.');
+        if (!$apprenant || !$apprenant->formation_id) {
             $formationsData = [];
             $totalFormations = 0;
             $totalNotes = 0;
             $moyenneGenerale = 0;
         } else {
-            \Log::info('Formation trouvée: ' . json_encode($formation->toArray()));
-            $notes = $formation->notes;
-            $moyenne = $notes->isNotEmpty() ? round($notes->avg('note') / 20 * 100, 1) : 0;
-            $formateur = $formation->formateurs->first();
-            $formationsData = [
-                [
-                    'id' => $formation->id,
-                    'name' => $formation->titre, // Vérifiez que 'titre' est le bon champ
-                    'formateur' => $formateur ? $formateur->nom : 'Non assigné',
-                    'moyenne' => $moyenne,
-                    'notes_count' => $notes->count(),
-                ],
-            ];
+            $formation = Formation::with(['notes' => function ($query) use ($apprenantId) {
+                $query->where('apprenant_id', $apprenantId);
+            }, 'formateurs'])->find($apprenant->formation_id);
 
-            // Statistiques
-            $totalFormations = 1; // Une seule formation par apprenant
-            $totalNotes = $notes->count();
-            $moyenneGenerale = $moyenne;
+            if (!$formation) {
+                $formationsData = [];
+                $totalFormations = 0;
+                $totalNotes = 0;
+                $moyenneGenerale = 0;
+            } else {
+                $notes = $formation->notes;
+                $moyenne = $notes->isNotEmpty() ? round($notes->avg('note') / 20 * 100, 1) : 0;
+                $formateur = $formation->formateurs->first();
+
+                $formationsData = [
+                    [
+                        'id' => $formation->id,
+                        'name' => $formation->titre,
+                        'formateur' => $formateur ? $formateur->nom : 'Non assigné',
+                        'moyenne' => $moyenne,
+                        'notes_count' => $notes->count(),
+                    ],
+                ];
+
+                $totalFormations = 1;
+                $totalNotes = $notes->count();
+                $moyenneGenerale = $moyenne;
+            }
         }
 
-        // Activités récentes (dernières notes)
         $recentActivities = Note::where('apprenant_id', $apprenantId)
             ->with(['formation', 'discipline'])
             ->orderBy('updated_at', 'desc')
@@ -68,14 +66,21 @@ class ApprenantDashboardController extends Controller
                 ];
             });
 
-        // Débogage : Vérifier les données envoyées
-        \Log::info('Données envoyées au frontend: ' . json_encode([
-            'totalFormations' => $totalFormations,
-            'totalNotes' => $totalNotes,
-            'moyenneGenerale' => $moyenneGenerale,
-            'recentActivities' => $recentActivities->toArray(),
-            'formations' => $formationsData,
-        ]));
+        // Récupérer les notifications non lues
+        $notifications = $user->notifications()
+            ->where('read', false)
+            ->orderBy('created_at', 'desc')
+            ->take(10) // Limite raisonnable
+            ->get()
+            ->map(function ($notification) {
+                return [
+                    'id' => $notification->id,
+                    'type' => $notification->type,
+                    'message' => $notification->message,
+                    'data' => $notification->data,
+                    'created_at' => $notification->created_at->diffForHumans(),
+                ];
+            });
 
         return Inertia::render('Apprenants/Dashboard', [
             'dashboardData' => [
@@ -84,6 +89,7 @@ class ApprenantDashboardController extends Controller
                 'moyenneGenerale' => $moyenneGenerale,
                 'recentActivities' => $recentActivities,
                 'formations' => $formationsData,
+                'notifications' => $notifications, // Ajout des notifications
             ],
         ]);
     }

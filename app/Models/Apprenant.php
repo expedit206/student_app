@@ -24,6 +24,7 @@ class Apprenant extends Model
         'formation_id', // Clé étrangère vers le niveau
     ];
 
+    protected $with=['formation'];
     // Définir la relation avec le modèle User
     public function user()
     {
@@ -49,6 +50,6 @@ class Apprenant extends Model
     public function notes()
     {
         return $this->hasMany(Note::class);
-    }
+    }   
    
 }

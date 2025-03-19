@@ -39,8 +39,7 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
-        return [
-            ...parent::share($request),
+        return array_merge(parent::share($request), [
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
@@ -50,6 +49,21 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
-        ];
+            'dashboardData' => [
+                'notifications' => $request->user() ? $request->user()->notifications()
+                    ->where('read', false)
+                    ->orderBy('created_at', 'desc')
+                    ->take(10)
+                    ->get()
+                    ->map(fn($n) => [
+                        'id' => $n->id,
+                        'type' => $n->type,
+                        'message' => $n->message,
+                        'data' => $n->data,
+                        'created_at' => $n->created_at->diffForHumans(),
+                    ])
+                     : [],
+            ],
+        ]);
     }
 }

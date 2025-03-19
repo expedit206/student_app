@@ -2,8 +2,9 @@
 import { ref } from 'vue';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { usePage } from '@inertiajs/vue3';
-import {route} from 'ziggy-js'; // Importez route directement depuis ziggy-js
+import { route } from 'ziggy-js';
 import TextLink from './TextLink.vue';
+import axios from 'axios'; // Ajoutez ceci en haut de MonLayout.vue
 
 const showSidebar = ref(true); // État initial de la sidebar
 const toggleSidebar = () => { showSidebar.value = !showSidebar.value };
@@ -14,6 +15,24 @@ const user = page.props.auth.user;
 // Vérifie les rôles
 const isAdmin = user && user.role === 'admin';
 const isFormateur = user && user.role === 'formateur';
+const isApprenant = user && user.role === 'apprenant';
+
+// Récupérer les notifications depuis les props globales
+const notifications = page.props.dashboardData?.notifications || [];
+
+const markAsRead = (notificationId) => {
+    axios.post(route('notifications.read', notificationId))
+        .then(response => {
+            if (response.data.success) {
+                page.props.dashboardData.notifications = notifications.filter(n => n.id !== notificationId);
+            } else {
+                console.error('Failed to mark as read:', response.data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error marking notification as read:', error.response?.data || error.message);
+        });
+};
 
 // Vérifie si une route est active
 const isActive = (routeName: string) => route().current(routeName);
@@ -157,6 +176,25 @@ main:hover .scroll-hint {
                     <i :class="showSidebar ? 'fas fa-chevron-left' : 'fas fa-chevron-right'" class="text-lg"></i>
                 </button>
                 <nav class="mt-6">
+                    <!-- Liens pour apprenant -->
+                    <div v-if="isApprenant">
+                        <TextLink :href="route('apprenant.dashboard')"
+                            :class="['nav-link', { 'active': isActive('apprenant.dashboard') }]">
+                            <i class="fas fa-tachometer-alt mr-3"></i>
+                            <span v-if="showSidebar">Dashboard</span>
+                        </TextLink>
+                        <TextLink :href="route('apprenant.notes')"
+                            :class="['nav-link', { 'active': isActive('apprenant.notes') }]">
+                            <i class="fas fa-star mr-3"></i>
+                            <span v-if="showSidebar">Mes Notes</span>
+                        </TextLink>
+                        <TextLink :href="route('apprenant.progression')"
+                            :class="['nav-link', { 'active': isActive('apprenant.progression') }]">
+                            <i class="fas fa-chart-line mr-3"></i>
+                            <span v-if="showSidebar">Ma Progression</span>
+                        </TextLink>
+                    </div>
+
                     <!-- Liens pour formateur -->
                     <div v-if="isFormateur">
                         <TextLink :href="route('formateur.dashboard')"
@@ -194,7 +232,7 @@ main:hover .scroll-hint {
                             <span v-if="showSidebar">Dashboard Admin</span>
                         </TextLink>
                         <TextLink :href="route('apprenants.index')"
-                            :class="['nav-link', { 'active': isActive('formateurs.index') }]">
+                            :class="['nav-link', { 'active': isActive('apprenants.index') }]">
                             <i class="fas fa-user-tie mr-3"></i>
                             <span v-if="showSidebar">Apprenants</span>
                         </TextLink>
@@ -214,6 +252,22 @@ main:hover .scroll-hint {
                             <span v-if="showSidebar">Disciplines</span>
                         </TextLink>
                     </div>
+
+                    <!-- Section Notifications -->
+                    <div v-if="isApprenant && showSidebar" class="mt-4 px-4">
+                        <h3 class="text-sm font-semibold text-gray-400 mb-2">Notifications</h3>
+                        <div v-if="notifications.length" class="space-y-2 max-h-64 overflow-y-auto">
+                            <div v-for="notification in notifications" :key="notification.id"
+                                class="p-2 bg-gray-700 rounded-lg text-sm text-white hover:bg-gray-600 transition-all">
+                                <p>{{ notification.message }}</p>
+                                <p class="text-xs text-gray-400">{{ notification.created_at }}</p>
+                                <button @click="markAsRead(notification.id)" class="text-teal-400 hover:text-teal-300">
+                                    Marquer comme lu
+                                </button>
+                            </div>
+                        </div>
+                        <p v-else class="text-sm text-gray-400">Aucune notification</p>
+                    </div>
                 </nav>
 
                 <!-- Profile Menu -->
@@ -225,6 +279,10 @@ main:hover .scroll-hint {
                                 <span class="flex items-center">
                                     <i class="fas fa-user mr-2"></i>
                                     <span v-if="showSidebar">Profil</span>
+                                    <span v-if="notifications.length"
+                                        class="ml-2 bg-red-500 text-white text-xs rounded-full px-2">
+                                        {{ notifications.length }}
+                                    </span>
                                 </span>
                                 <i class="fas fa-chevron-down" v-if="showSidebar"></i>
                             </button>

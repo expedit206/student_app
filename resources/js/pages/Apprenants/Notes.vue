@@ -3,12 +3,18 @@ import MonLayout from '@/components/MonLayout.vue';
 
 const props = defineProps<{
     notesData: {
-        formation: { id: number; name: string };
+        formation: { id: number; name: string } | null;
         notes: Array<{ id: number; discipline: string; note: number; max_note: number; date: string; commentaire: string }>;
         totalNotes: number;
         moyenne: number;
     };
 }>();
+
+// Débogage pour vérifier les données reçues
+import { onMounted } from 'vue';
+onMounted(() => {
+    console.log('Notes Data:', props.notesData);
+});
 </script>
 
 <template>
@@ -18,7 +24,7 @@ const props = defineProps<{
             <header class="mb-6 flex items-center justify-between animate-fade-in">
                 <h1 class="text-4xl font-bold text-white flex items-center">
                     <i class="fas fa-star mr-3 text-teal-400 text-3xl animate-pulse"></i>
-                    Mes Notes - {{ props.notesData.formation.name }}
+                    Mes Notes {{ props.notesData.formation ? `- ${props.notesData.formation.name}` : '' }}
                 </h1>
                 <div class="text-sm text-gray-400">Mis à jour le {{ new Date().toLocaleDateString() }}</div>
             </header>

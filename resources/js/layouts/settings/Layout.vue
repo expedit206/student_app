@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Heading from '@/components/Heading.vue';
+import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { type NavItem } from '@/types';
-import { Link, usePage } from '@inertiajs/vue3';
-
+import { usePage } from '@inertiajs/vue3';
 const sidebarNavItems: NavItem[] = [
     {
         title: 'Profile',
@@ -39,9 +39,9 @@ const currentPath = page.props.ziggy?.location ? new URL(page.props.ziggy.locati
                         :class="['w-full justify-start', { 'bg-muted': currentPath === item.href }]"
                         as-child
                     >
-                        <Link :href="item.href">
+                        <TextLink :href="item.href">
                             {{ item.title }}
-                        </Link>
+                        </TextLink>
                     </Button>
                 </nav>
             </aside>
