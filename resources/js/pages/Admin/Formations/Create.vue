@@ -62,7 +62,7 @@ const submit = () => {
                
                 <button type="submit"
                     class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition duration-200"
-                    :disabled="!form.titre || !form.description || !form.nbh_hebdomadaire || !form.nbh_total ">
+                    :disabled="!form.titre || !form.description ">
                     Créer
                 </button>
             </form>

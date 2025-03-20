@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('titre');
             $table->text('description');
-            $table->integer('nbh_hebdomadaire'); // Ajout du nombre d'heures hebdomadaire
-            $table->integer('nbh_total');
            
             $table->timestamps();
         });

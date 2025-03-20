@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('nom');
             $table->text('description')->nullable();
+            $table->integer('heures_hebdo')->default(0);
+            $table->integer('heures_total')->default(0);
+            $table->foreignId('formateur_id')->nullable()->constrained('users')->onDelete('set null')->after('heures_total');
             $table->timestamps();
         });
     }

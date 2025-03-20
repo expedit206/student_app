@@ -120,4 +120,6 @@ class ApprenantController extends Controller
         $apprenant->delete();
         return redirect()->route('apprenants.index');
     }
+
+    
 }

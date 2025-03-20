@@ -11,12 +11,6 @@ import { initializeTheme } from './composables/useAppearance';
 import axios from 'axios';
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-if (csrfToken) {
-    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
-} else {
-    console.error('CSRF token not found');
-}
 
 declare module 'vite/client' {
     interface ImportMetaEnv {

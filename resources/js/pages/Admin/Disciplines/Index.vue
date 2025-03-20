@@ -11,7 +11,10 @@ const props = defineProps<{
         id: number;
         nom: string;
         description?: string;
-        formations: { id: number; titre: string }[]; // Relation avec la table pivot
+        heures_hebdo: number;
+        heures_total: number;
+        formateurs: { id: number; nom: string; pivot: { formation_id: number } }[]; // Relation avec formateurs
+        formations: { id: number; titre: string }[];
     }[];
     formations: {
         id: number;
@@ -111,15 +114,12 @@ function truncateDescription(description: string | undefined, maxLength: number)
 
             <!-- Filtres -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                <!-- Recherche -->
                 <div class="relative animate-slide-up">
                     <i
                         class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"></i>
                     <input type="text" v-model="search" placeholder="Rechercher par nom ou description..."
                         class="pl-12 pr-4 py-3 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 dark:text-gray-100" />
                 </div>
-
-                <!-- Filtre par formation -->
                 <div class="relative animate-slide-up">
                     <i
                         class="fas fa-filter absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"></i>
@@ -144,15 +144,31 @@ function truncateDescription(description: string | undefined, maxLength: number)
                                     <i class="fas fa-id-badge mr-1"></i>ID
                                 </th>
                                 <th
-                                    class="w-1/3 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                    class="w-1/5 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
                                     <i class="fas fa-book-open mr-1"></i>Nom
                                 </th>
                                 <th
-                                    class="w-1/2 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                    class="w-1/4 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
                                     <i class="fas fa-info-circle mr-1"></i>Description
                                 </th>
                                 <th
-                                    class="w-32 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                    class="w-16 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                    <i class="fas fa-clock mr-1"></i>H. Hebdo
+                                </th>
+                                <th
+                                    class="w-16 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                    <i class="fas fa-hourglass mr-1"></i>H. Total
+                                </th>
+                                <th
+                                    class="w-1/5 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                    <i class="fas fa-user-tie mr-1"></i>Formateur
+                                </th>
+                                <th
+                                    class="w-16 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                    <i class="fas fa-weight mr-1"></i>Coef
+                                </th>
+                                <th
+                                    class="w-1/6 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
                                     <i class="fas fa-cogs mr-1"></i>Actions
                                 </th>
                             </tr>
@@ -168,8 +184,18 @@ function truncateDescription(description: string | undefined, maxLength: number)
                                 </td>
                                 <td class="px-4 py-3 text-gray-900 dark:text-gray-100 text-sm truncate"
                                     :title="discipline.description">
-                                    {{ truncateDescription(discipline.description, 50) }}
+                                    {{ truncateDescription(discipline.description, 30) }}
                                 </td>
+                                <td class="px-4 py-3 text-gray-900 dark:text-gray-100 text-sm">{{
+                                    discipline.heures_hebdo }}</td>
+                                <td class="px-4 py-3 text-gray-900 dark:text-gray-100 text-sm">{{
+                                    discipline.heures_total }}</td>
+                                <td class="px-4 py-3 text-gray-900 dark:text-gray-100 text-sm truncate"
+                                    :title="discipline.formateur">
+                                    {{ discipline.formateur }}
+                                </td>
+                                <td class="px-4 py-3 text-gray-900 dark:text-gray-100 text-sm">{{ discipline.heures_total/10
+                                    }}</td>
                                 <td class="px-4 py-3 flex space-x-2">
                                     <TextLink :href="route('disciplines.edit', discipline.id)"
                                         class="text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300 transition-colors duration-200 flex items-center text-sm">
@@ -184,7 +210,7 @@ function truncateDescription(description: string | undefined, maxLength: number)
                                 </td>
                             </tr>
                             <tr v-if="paginatedDisciplines.length === 0">
-                                <td colspan="4"
+                                <td colspan="8"
                                     class="px-4 py-6 text-center text-gray-500 dark:text-gray-400 animate-pulse">
                                     <i class="fas fa-exclamation-circle mr-2 text-xl"></i>
                                     Aucune discipline trouvée
@@ -216,6 +242,7 @@ function truncateDescription(description: string | undefined, maxLength: number)
 
 <style scoped>
 /* Animations personnalisées */
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -311,5 +338,20 @@ td {
         padding-left: 1rem;
         padding-right: 1rem;
     }
+
+    th,
+    td {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+        min-width: 60px;
+    }
 }
+    /* Scrollbar stylisée */
+.max-h-[60vh]::-webkit-scrollbar { width: 8px; }
+.max-h-[60vh]::-webkit-scrollbar-track { background: #e5e7eb; border-radius: 4px; }
+.max-h-[60vh]::-webkit-scrollbar-thumb { background: #6b7280; border-radius: 4px; }
+.max-h-[60vh]::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+.dark .max-h-[60vh]::-webkit-scrollbar-track { background: #374151; }
+.dark .max-h-[60vh]::-webkit-scrollbar-thumb { background: #9ca3af; }
+.dark .max-h-[60vh]::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
 </style>

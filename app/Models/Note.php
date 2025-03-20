@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Note extends Model
 {
     protected $fillable = ['apprenant_id', 'discipline_id', 'formation_id', 'note'];
+    // protected $with = 'formation';
 
     public function apprenant()
     {

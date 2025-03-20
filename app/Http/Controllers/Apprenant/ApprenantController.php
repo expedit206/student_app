@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Apprenant;
 
+use App\Models\Note;
 use Inertia\Inertia;
+use App\Models\Apprenant;
 use App\Models\Formation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -68,4 +70,56 @@ class ApprenantController extends Controller
         ]);
     }
 
+
+    public function carnet(Request $request)
+    {
+        $user = $request->user();
+        $apprenant = Apprenant::where('user_id', $user->id)->firstOrFail();
+
+        $formation = $apprenant->formation()
+            ->with(['disciplines.formateurs', 'notes' => function ($query) use ($apprenant) {
+                $query->where('apprenant_id', $apprenant->id)
+                    ->select('id', 'apprenant_id', 'discipline_id', 'note', 'created_at');
+            }])
+            ->first();
+
+        if (!$formation) {
+            return Inertia::render('Apprenant/Carnet', ['carnetData' => null]);
+        }
+
+        $disciplines = $formation->disciplines->map(function ($discipline) use ($formation) {
+            $notes = $formation->notes->where('discipline_id', $discipline->id)->pluck('note');
+            $notes = Note::with('formation');
+            dd($notes);
+            $moyenne = $notes->avg();
+
+            // Récupérer le formateur lié à cette discipline ET cette formation
+            $formateur = $discipline->formateurs()
+                ->wherePivot('formation_id', $formation->id)
+                ->first();
+
+            return [
+                'id' => $discipline->id,
+                'titre' => $discipline->nom,
+                'heures_hebdo' => $discipline->heures_hebdo ?? 0,
+                'heures_total' => $discipline->heures_total ?? 0,
+                'formateur' => $formateur ? $formateur->nom : 'Non attribué',
+                'coefficient' => ($discipline->heures_total ?? 0) / 10,
+                'notes' => $notes->implode(', ') ?: 'Aucune',
+                'moyenne' => $moyenne ? round($moyenne, 2) : null,
+                'statut' => $moyenne ? ($moyenne >= 10 ? 'Validé' : 'À améliorer') : 'N/A',
+            ];
+        });
+
+        $carnetData = [
+            'titre' => $formation->titre,
+            'disciplines' => $disciplines,
+            'moyenne_formation' => $disciplines->pluck('moyenne')->filter()->avg(),
+            'total_heures' => $disciplines->sum('heures_total'),
+        ];
+
+        return Inertia::render('Apprenants/Carnet', [
+            'carnetData' => $carnetData,
+        ]);
+    }
 }

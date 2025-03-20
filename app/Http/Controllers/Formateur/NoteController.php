@@ -3,24 +3,40 @@
 namespace App\Http\Controllers\Formateur;
 
 use App\Models\Note;
+use Inertia\Inertia;
 use App\Models\Apprenant;
 use App\Models\Formation;
 use App\Models\Discipline;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class NoteController extends Controller
 {
     public function showNotes(Request $request)
     {
-        $formateurId = auth()->user()->id;
+        $formateurId = auth()->user()->formateur->id;
 
-        // Charger toutes les formations du formateur avec leurs disciplines et apprenants
-        $formationsRaw = Formation::whereHas('formateurs', function ($query) use ($formateurId) {
-            $query->where('formateur_id', $formateurId);
-        })
+        // Étape 1 : Récupérer les disciplines assignées au formateur, groupées par formation_id
+        $disciplineFormateurRaw = DB::table('discipline_formateur')
+            ->where('formateur_id', $formateurId)
+            ->select('formation_id', 'discipline_id')
+            ->get();
+
+        // Regrouper les discipline_id par formation_id
+        $disciplineFormateur = $disciplineFormateurRaw->groupBy('formation_id')->map(function ($group) {
+            return $group->pluck('discipline_id')->all();
+        })->toArray();
+
+        // Extraire les IDs de formations
+        $formationIds = array_keys($disciplineFormateur);
+
+        // Étape 2 : Charger les formations avec leurs disciplines et apprenants
+        $formationsRaw = Formation::whereIn('id', $formationIds)
             ->with([
-                'disciplines',
+                'disciplines' => function ($query) use ($disciplineFormateur) {
+                    $query->whereIn('disciplines.id', array_merge(...array_values($disciplineFormateur)));
+                },
                 'apprenants' => function ($query) {
                     $query->with(['notes' => function ($query) {
                         $query->select('id', 'apprenant_id', 'formation_id', 'discipline_id', 'note');
@@ -29,15 +45,20 @@ class NoteController extends Controller
             ])
             ->get();
 
-        // Déterminer la formation sélectionnée par défaut avant transformation
+        // Déterminer la formation sélectionnée par défaut
         $selectedFormationId = $formationsRaw->isNotEmpty() ? $formationsRaw->first()->id : null;
 
-        // Transformer les données pour Inertia
-        $formations = $formationsRaw->map(function ($formation) {
+        // Étape 3 : Transformer les données pour Inertia
+        $formations = $formationsRaw->map(function ($formation) use ($disciplineFormateur) {
+            // Filtrer les disciplines pour ne garder que celles assignées au formateur pour cette formation
+            $filteredDisciplines = $formation->disciplines->filter(function ($discipline) use ($formation, $disciplineFormateur) {
+                return in_array($discipline->id, $disciplineFormateur[$formation->id] ?? []);
+            });
+
             return [
                 'id' => $formation->id,
                 'titre' => $formation->titre,
-                'disciplines' => $formation->disciplines->map(fn($discipline) => [
+                'disciplines' => $filteredDisciplines->map(fn($discipline) => [
                     'id' => $discipline->id,
                     'nom' => $discipline->nom,
                 ]),
@@ -54,9 +75,9 @@ class NoteController extends Controller
             ];
         });
 
-        return inertia('Formateurs/Notes/Index', [
+        return Inertia::render('Formateurs/Notes/Index', [
             'formations' => $formations,
-            'selectedFormation' => $selectedFormationId,
+            'selectedFormationId' => $selectedFormationId,
         ]);
     }
 

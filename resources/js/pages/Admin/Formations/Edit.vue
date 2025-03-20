@@ -16,19 +16,7 @@
                         class="text-black dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded p-2 w-full focus:ring-2 focus:ring-blue-500"
                         required></textarea>
                 </div>
-                <div class="form-group mb-4">
-                    <label for="nbh_hebdomadaire" class="block text-gray-700 dark:text-gray-300">Heures
-                        Hebdomadaires</label>
-                    <input type="number" v-model="form.nbh_hebdomadaire"
-                        class="text-black dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded p-2 w-full focus:ring-2 focus:ring-blue-500"
-                        required />
-                </div>
-                <div class="form-group mb-4">
-                    <label for="nbh_total" class="block text-gray-700 dark:text-gray-300">Heures Totales</label>
-                    <input type="number" v-model="form.nbh_total"
-                        class="text-black dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded p-2 w-full focus:ring-2 focus:ring-blue-500"
-                        required />
-                </div>
+               
              
                 <button type="submit"
                     class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition duration-200"
@@ -51,8 +39,7 @@ const { formation, formateurs } = usePage().props;
 const form = useForm({
     titre: formation.titre,
     description: formation.description,
-    nbh_hebdomadaire: formation.nbh_hebdomadaire, // Nouveau champ
-    nbh_total: formation.nbh_total,               // Nouveau champ
+             // Nouveau champ
     formateur_id: formation.formateur_id,
 });
 

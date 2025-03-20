@@ -3,9 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Apprenant;
+use App\Models\Formateur;
+use App\Models\Notification;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -46,11 +49,15 @@ class User extends Authenticatable
     }
         protected $with=['apprenant'];
 
-    public function apprenant()
-    {
-        return $this->hasOne(Apprenant::class, 'user_id');
-    }
-
+        
+        public function apprenant()
+        {
+            return $this->hasOne(Apprenant::class, 'user_id');
+        }
+        public function formateur()
+        {
+            return $this->hasOne(Formateur::class, 'user_id');
+        }
     public function notifications()
     {
         return $this->hasMany(Notification::class);

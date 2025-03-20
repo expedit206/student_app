@@ -13,6 +13,8 @@ class Discipline extends Model
     protected $fillable = [
         'nom',
         'description',
+        'heures_hebdo',
+        'heures_total',
     ];
 
     // Si vous avez besoin de définir des relations, vous pouvez le faire ici

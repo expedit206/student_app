@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Note;
 use App\Models\Apprenant;
 use App\Models\Formateur;
 use App\Models\Discipline;
@@ -14,14 +15,12 @@ class Formation extends Model
 
     protected $with = [
         'formateurs',
-        // 'disciplines'
+        'notes'
     ];
 
     protected $fillable = [
         'titre',
-        'description',
-        'nbh_hebdomadaire', // Ajout du champ pour heures hebdomadaires
-        'nbh_total',       // Ajout du champ pour heures totales
+        'description',       // Ajout du champ pour heures totales
         // Ajoutez d'autres champs nécessaires ici
     ];
 

@@ -35,7 +35,7 @@ class ApprenantSeeder extends Seeder
             'adresse' => 'Adresse spéciale',
             'telephone' => '0600000000', // Numéro de téléphone fictif
             'niveau_id' => rand(1, 10), // Supposons que vous ayez des niveaux de 1 à 10
-            'formation_id' => rand(1, 10), // Ajoutez une clé étrangère vers les formations
+            'formation_id' => 1, // Ajoutez une clé étrangère vers les formations
         ]);
 
         // Créez des utilisateurs et des étudiants
