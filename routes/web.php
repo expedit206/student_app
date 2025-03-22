@@ -74,6 +74,8 @@ Route::middleware(['auth', 'userRole:apprenant'])->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 
     Route::get('/apprenant/carnet', [App\Http\Controllers\Apprenant\ApprenantController::class, 'carnet'])->name('apprenant.carnet');
+
+    Route::get('/apprenant/disciplines', [App\Http\Controllers\Apprenant\DisciplineController::class, 'showDisciplines'])->name('apprenant.disciplines');
 });
 
 

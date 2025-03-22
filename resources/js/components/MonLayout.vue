@@ -204,6 +204,13 @@ main:hover .scroll-hint {
                             <i class="fas fa-tachometer-alt mr-3"></i>
                             <span v-if="showSidebar">Dashboard</span>
                         </TextLink>
+                        
+                            <TextLink :href="route('apprenant.disciplines')"
+                                :class="['nav-link', { 'active': isActive('apprenant.disciplines') }]">
+                                <i class="fas fa-tachometer-alt mr-3"></i>
+                                <span v-if="showSidebar">Mes disciplines</span>
+                            </TextLink>
+                            
                         <TextLink :href="route('apprenant.notes')"
                             :class="['nav-link', { 'active': isActive('apprenant.notes') }]">
                             <i class="fas fa-star mr-3"></i>

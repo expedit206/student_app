@@ -14,8 +14,8 @@ class Formation extends Model
     use HasFactory; // Ajout du trait HasFactory
 
     protected $with = [
-        'formateurs',
-        'notes'
+        // 'formateurs',
+        // 'notes'
     ];
 
     protected $fillable = [

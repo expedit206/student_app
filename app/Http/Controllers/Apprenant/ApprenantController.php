@@ -86,11 +86,11 @@ class ApprenantController extends Controller
         if (!$formation) {
             return Inertia::render('Apprenant/Carnet', ['carnetData' => null]);
         }
-
-        $disciplines = $formation->disciplines->map(function ($discipline) use ($formation) {
+        $formation = $formation->load('notes');
+        $disciplines = $formation->disciplines->map(function ($discipline) use ($formation , $apprenant) {
             $notes = $formation->notes->where('discipline_id', $discipline->id)->pluck('note');
-            $notes = Note::with('formation');
-            dd($notes);
+            // $formations = $apprenant->formation()->with('notes')->get();
+            // dd($formation->notes);
             $moyenne = $notes->avg();
 
             // Récupérer le formateur lié à cette discipline ET cette formation

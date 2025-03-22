@@ -34,7 +34,6 @@ const getMoyenneColor = (moyenne) => {
                             <th class="p-3">Formateur</th>
                             <th class="p-3">Coefficient</th>
                             <th class="p-3">Notes</th>
-                            <th class="p-3">Moyenne</th>
                             <th class="p-3">Statut</th>
                         </tr>
                     </thead>
@@ -47,10 +46,8 @@ const getMoyenneColor = (moyenne) => {
                             <td class="p-3">{{ discipline.heures_total }}</td>
                             <td class="p-3">{{ discipline.formateur }}</td>
                             <td class="p-3">{{ discipline.coefficient }}</td>
-                            <td class="p-3">{{ discipline }}</td>
-                            <td class="p-3" :class="getMoyenneColor(discipline.moyenne)">
-                                {{ discipline.moyenne ?? 'N/A' }}
-                            </td>
+                            <td class="p-3">{{ discipline.notes }}</td>
+                           
                             <td class="p-3">{{ discipline.statut }}</td>
                         </tr>
                     </tbody>
