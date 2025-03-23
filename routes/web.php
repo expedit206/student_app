@@ -14,28 +14,10 @@ use App\Http\Controllers\Admin\ManageAssociationController;
 use App\Http\Controllers\Apprenant\ApprenantDashboardController;
 use App\Http\Controllers\Formateur\FormateurDashboardController;
 
-// Route::get('/', function () {
-//     return Inertia::render('Welcome');
-// })->name('hom');
-
-// Route::get('dashboard', function () {
-//     return Inertia::render('MonDashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 
 
-// Route::resource('formateurs', FormateurController::class);
-
-
-// Route::resource('formations', FormationController::class);
-
-// Route::resource('disciplines', DisciplineController::class);
-
-
-
-Route::get('/', function () {
-    return Inertia::render('Welcome');
-})->name('dashboard');
+Route::get('/', [WelcomeController::class, 'welcome'])->name('welcome');
 Route::middleware(['auth', 'userRole:formateur'])->group(function () {
 
     
