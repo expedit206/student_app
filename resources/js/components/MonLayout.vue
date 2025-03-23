@@ -57,7 +57,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt.value = e;
     isInstallable.value = true;
-    alert('kk')
 });
 
 const installApp = async () => {

@@ -853,8 +853,8 @@
     ]
   },
   
-    "name": "Mon Application de Formation",
-    "short_name": "Formation",
+    "name": "Student_App CFPCa",
+    "short_name": "student_app",
     "description": "Gestion des formations, progressions et notes",
     "start_url": "/", 
     "display": "standalone",
@@ -863,7 +863,7 @@
     "icons": [
         {
             "src": "/img/logo.png",
-            "sizes": "192x192",
+            "sizes": "200x200",
             "type": "image/png"
         },
         {
