@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use App\Models\Formateur;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\Formateur\NoteController;
 use App\Http\Controllers\Admin\ApprenantController;
 use App\Http\Controllers\Admin\FormateurController;
