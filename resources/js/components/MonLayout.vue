@@ -6,19 +6,17 @@ import { route } from 'ziggy-js';
 import TextLink from './TextLink.vue';
 import axios from 'axios';
 
-const showSidebar = ref(false); // Fermée par défaut sur mobile
-
+const showSidebar = ref(false);
 const toggleSidebar = () => { showSidebar.value = !showSidebar.value };
 
 const page = usePage();
 const user = page.props.auth.user;
 
-// Vérifie les rôles
 const isAdmin = user && user.role === 'admin';
 const isFormateur = user && user.role === 'formateur';
 const isApprenant = user && user.role === 'apprenant';
 
-// Notifications réactives
+// Notifications
 const localNotifications = ref(page.props.dashboardData?.notifications || []);
 watch(() => page.props.dashboardData?.notifications, (newNotifications) => {
     localNotifications.value = newNotifications || [];
@@ -41,17 +39,44 @@ const markAsRead = (notificationId) => {
         .then(response => {
             if (response.data.success) {
                 localNotifications.value = localNotifications.value.filter(n => n.id !== notificationId);
-            } else {
-                console.error('Failed to mark as read:', response.data.message);
             }
         })
         .catch(error => {
-            console.error('Error marking notification as read:', error.response?.data || error.message);
+            console.error('Error:', error.response?.data || error.message);
         });
 };
 
 // Route active
 const isActive = (routeName: string) => route().current(routeName);
+
+// PWA Install Prompt
+const deferredPrompt = ref<any>(null);
+const isInstallable = ref(false);
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt.value = e;
+    isInstallable.value = true;
+    alert('kk')
+});
+
+const installApp = async () => {
+    if (deferredPrompt.value) {
+        deferredPrompt.value.prompt();
+        const { outcome } = await deferredPrompt.value.userChoice;
+        if (outcome === 'accepted') {
+            console.log('Application installée');
+        } else {
+            console.log('Installation refusée');
+        }
+        deferredPrompt.value = null;
+        isInstallable.value = false;
+    }
+};
+
+const showFallback = () => {
+    alert('Ajoutez cette page à votre écran d’accueil via le menu du navigateur (ex. "Ajouter à l’écran d’accueil" sur Chrome).');
+};
 </script>
 
 <template>
@@ -76,8 +101,8 @@ const isActive = (routeName: string) => route().current(routeName);
                 </div>
 
                 <!-- Navigation -->
-                <nav class="flex-1  py-4">
-                    <!-- Apprenant (icônes indigo) -->
+                <nav class="flex-1 py-4">
+                    <!-- Apprenant -->
                     <div v-if="isApprenant" class="space-y-2">
                         <TextLink :href="route('apprenant.dashboard')"
                             :class="['nav-link', { 'active': isActive('apprenant.dashboard') }]">
@@ -110,7 +135,7 @@ const isActive = (routeName: string) => route().current(routeName);
                         </TextLink>
                     </div>
 
-                    <!-- Formateur (icônes rouges) -->
+                    <!-- Formateur -->
                     <div v-if="isFormateur" class="space-y-2">
                         <TextLink :href="route('formateur.dashboard')"
                             :class="['nav-link', { 'active': isActive('formateur.dashboard'), 'formateur-active': isActive('formateur.dashboard') }]">
@@ -139,7 +164,7 @@ const isActive = (routeName: string) => route().current(routeName);
                         </TextLink>
                     </div>
 
-                    <!-- Admin (icônes blanches) -->
+                    <!-- Admin -->
                     <div v-if="isAdmin" class="space-y-2">
                         <TextLink :href="route('admin.dashboard')"
                             :class="['nav-link', { 'active': isActive('admin.dashboard') }]">
@@ -186,6 +211,20 @@ const isActive = (routeName: string) => route().current(routeName);
                         </div>
                         <p v-else class="text-sm text-gray-400 italic">Aucune notification</p>
                     </div>
+
+                    <!-- Bouton PWA -->
+                    <div class="mt-4 px-4">
+                        <button v-if="isInstallable" @click="installApp"
+                            class="nav-link w-full text-left bg-indigo-600 hover:bg-indigo-700">
+                            <i class="fas fa-download w-6 text-white"></i>
+                            <span class="flex-1">Installer l’app</span>
+                        </button>
+                        <button v-else @click="showFallback"
+                            class="nav-link w-full text-left bg-gray-600 hover:bg-gray-700">
+                            <i class="fas fa-plus w-6 text-white"></i>
+                            <span class="flex-1">Ajouter manuellement</span>
+                        </button>
+                    </div>
                 </nav>
 
                 <!-- Profil -->
@@ -220,10 +259,9 @@ const isActive = (routeName: string) => route().current(routeName);
             </div>
         </aside>
 
-        <!-- Main Content avec Toggle Mobile -->
+        <!-- Main Content -->
         <main
             class="flex-1 p-4 sm:p-6 bg-gray-800 overflow-y-auto transition-all duration-300 relative animate-fade-in">
-            <!-- Bouton Toggle Mobile -->
             <button v-if="!showSidebar" @click="toggleSidebar"
                 class="lg:hidden fixed top-4 left-4 z-30 bg-indigo-600 text-white p-2 rounded-full shadow-lg hover:bg-indigo-700 transition-all">
                 <i class="fas fa-bars text-lg"></i>
@@ -296,7 +334,6 @@ body {
 
 .nav-link.active {
     background-color: #4f46e5;
-    /* Indigo pour apprenant/admin */
     color: #ffffff;
     border-left-color: #ffffff;
     font-weight: 600;
@@ -309,7 +346,6 @@ body {
 
 .nav-link.formateur-active {
     background-color: #b91c1c;
-    /* Rouge pour formateur */
 }
 
 /* Scrollbars */
@@ -371,7 +407,6 @@ main:hover .scroll-hint {
 @media (min-width: 1024px) {
     .sidebar {
         width: 256px;
-        /* Toujours ouverte sur desktop */
     }
 
     main {

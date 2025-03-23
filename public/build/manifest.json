@@ -36,7 +36,7 @@
     "imports": [
       "resources/js/app.ts",
       "_utils-bHC4iFJS.js",
-      "_index-DQfSIHfm.js"
+      "_index-DQfSIHfm.js"    
     ]
   },
   "_Layout.vue_vue_type_script_setup_true_lang-D_73GtHB.js": {
@@ -851,5 +851,26 @@
       "_DropdownMenuTrigger.vue_vue_type_script_setup_true_lang-BLs_NVvS.js",
       "__plugin-vue_export-helper-DlAUqK2U.js"
     ]
-  }
+  },
+  
+    "name": "Mon Application de Formation",
+    "short_name": "Formation",
+    "description": "Gestion des formations, progressions et notes",
+    "start_url": "/", 
+    "display": "standalone",
+    "background_color": "#1f2937", 
+    "theme_color": "#0d9488", 
+    "icons": [
+        {
+            "src": "/img/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+
 }
