@@ -5,7 +5,7 @@ import { usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import TextLink from './TextLink.vue';
 import axios from 'axios';
-
+import { onMounted } from 'vue';
 const showSidebar = ref(false);
 const toggleSidebar = () => { showSidebar.value = !showSidebar.value };
 
@@ -59,6 +59,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     isInstallable.value = true;
 });
 
+
 const installApp = async () => {
     if (deferredPrompt.value) {
         deferredPrompt.value.prompt();
@@ -72,6 +73,23 @@ const installApp = async () => {
         isInstallable.value = false;
     }
 };
+
+const resetPWA = async () => {
+    if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+            await registration.unregister();
+        }
+        await navigator.serviceWorker.register('/service-worker.js');
+        console.log('Service Worker réinitialisé');
+        // window.location.reload(); // Recharge pour déclencher beforeinstallprompt
+    }
+};
+
+onMounted(() => {
+    // Réinitialise le contexte PWA au montage (optionnel)
+    resetPWA();
+});
 
 const showFallback = () => {
     alert('Ajoutez cette page à votre écran d’accueil via le menu du navigateur (ex. "Ajouter à l’écran d’accueil" sur Chrome).');
