@@ -28,62 +28,138 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthBase title="Log in to your account" description="Enter your email and password below to log in">
-        <Head title="Log in" />
+    <AuthBase title="Accédez à votre avenir"
+        description="Connectez-vous pour booster vos compétences avec le Centre de Formation Professionnel La Canadienne">
 
-        <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
+        <Head title="Connexion" />
+
+        <!-- Message de statut -->
+        <div v-if="status" class="mb-6 text-center text-sm font-medium text-green-400 animate-fade-in-up">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit" class="flex flex-col gap-6">
-            <div class="grid gap-6">
-                <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        required
-                        autofocus
-                        :tabindex="1"
-                        autocomplete="email"
-                        v-model="form.email"
-                        placeholder="email@example.com"
-                    />
-                    <InputError :message="form.errors.email" />
-                </div>
-
-                <div class="grid gap-2">
-                    <div class="flex items-center justify-between">
-                        <Label for="password">Password</Label>
-                        <TextLink v-if="canResetPassword" :href="route('password.request')" class="text-sm" :tabindex="5">
-                            Forgot password?
-                        </TextLink>
-                    </div>
-                    <Input
-                        id="password"
-                        type="password"
-                        required
-                        :tabindex="2"
-                        autocomplete="current-password"
-                        v-model="form.password"
-                        placeholder="Password"
-                    />
-                    <InputError :message="form.errors.password" />
-                </div>
-
-                <div class="flex items-center justify-between" :tabindex="3">
-                    <Label for="remember" class="flex items-center space-x-3">
-                        <Checkbox id="remember" v-model:checked="form.remember" :tabindex="4" />
-                        <span>Remember me</span>
-                    </Label>
-                </div>
-
-                <Button type="submit" class="mt-4 w-full" :tabindex="4" :disabled="form.processing">
-                    <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
-                    Log in
-                </Button>
+        <!-- Formulaire -->
+        <form @submit.prevent="submit"
+            class="flex flex-col gap-6 w-full bg-gray-800 p-6 sm:p-8 rounded-xl shadow-xl animate-slide-in-up">
+            <!-- Email -->
+            <div class="grid gap-3">
+                <Label for="email" class="text-gray-200 text-sm sm:text-base font-semibold">Votre email</Label>
+                <Input id="email" type="email" required autofocus :tabindex="1" autocomplete="email"
+                    v-model="form.email" placeholder="email@exemple.com"
+                    class="bg-gray-900 border-gray-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 py-3 px-4 rounded-lg transition-all duration-300" />
+                <InputError :message="form.errors.email" class="text-red-400 text-sm" />
             </div>
 
+            <!-- Mot de passe -->
+            <div class="grid gap-3">
+                <div class="flex items-center justify-between">
+                    <Label for="password" class="text-gray-200 text-sm sm:text-base font-semibold">Votre mot de
+                        passe</Label>
+                    <TextLink v-if="canResetPassword" :href="route('password.request')"
+                        class="text-sm text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                        :tabindex="5">
+                        Oublié ?
+                    </TextLink>
+                </div>
+                <Input id="password" type="password" required :tabindex="2" autocomplete="current-password"
+                    v-model="form.password" placeholder="••••••••"
+                    class="bg-gray-900 border-gray-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 py-3 px-4 rounded-lg transition-all duration-300" />
+                <InputError :message="form.errors.password" class="text-red-400 text-sm" />
+            </div>
+
+            <!-- Se souvenir de moi -->
+            <div class="flex items-center">
+                <Label for="remember" class="flex items-center space-x-2 text-gray-200">
+                    <Checkbox id="remember" v-model:checked="form.remember" :tabindex="4"
+                        class="text-indigo-500 rounded border-gray-700" />
+                    <span class="text-sm">Rester connecté</span>
+                </Label>
+            </div>
+
+            <!-- Bouton Connexion -->
+            <Button type="submit"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 animate-fade-in-up"
+                :disabled="form.processing" :tabindex="4">
+                <LoaderCircle v-if="form.processing" class="h-5 w-5 animate-spin" />
+                <span>Connexion</span>
+            </Button>
         </form>
     </AuthBase>
 </template>
+
+<style scoped>
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-slide-in-up {
+    animation: slideInUp 0.8s ease-out forwards;
+}
+
+/* Réactivité */
+@media (max-width: 640px) {
+    .text-xl {
+        font-size: 1.25rem;
+    }
+
+    /* Titre dans AuthBase */
+    .text-base {
+        font-size: 1rem;
+    }
+
+    .text-sm {
+        font-size: 0.875rem;
+    }
+
+    .py-3 {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .px-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .gap-6 {
+        gap: 1.5rem;
+    }
+
+    .gap-3 {
+        gap: 0.75rem;
+    }
+
+    .p-6 {
+        padding: 1.5rem;
+    }
+
+    .rounded-xl {
+        border-radius: 0.75rem;
+    }
+}
+</style>

@@ -51,7 +51,7 @@ const chartOptions = {
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center animate-slide-in">
                 <div class="flex items-center mb-4 sm:mb-0">
                     <img src="/img/logo.png" alt="Logo CFP La Canadienne"
-                        class="h-12 w-12 sm:h-16 sm:w-16 mr-3 p-1 bg-white rounded-full shadow-md animate-spin-slow" />
+                        class="h-12 w-12 sm:h-16 sm:w-16 mr-3 p-1 bg-white rounded-full shadow-md " />
                     <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-center sm:text-left">
                         Centre de Formation Professionnel La Canadienne
                     </h1>

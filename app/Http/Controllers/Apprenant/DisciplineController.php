@@ -16,17 +16,18 @@ class DisciplineController extends Controller
 
         // Charger la formation de l'apprenant avec ses disciplines
         $formation = $apprenant->formation()
-            ->with(['disciplines' => function ($query) {
+            ->with(['disciplines' => function ($query) use ($apprenant) {
                 $query->select('disciplines.id', 'nom', 'description', 'heures_hebdo', 'heures_total')
-                    ->with(['formateurs' => function ($q) {
-                        $q->select('formateurs.id', 'nom')->wherePivot('formation_id', \DB::raw('formations.id'));
+                    ->with(['formateurs' => function ($q) use ($apprenant) {
+                        $q->select('formateurs.id', 'nom')
+                            ->wherePivot('formation_id', $apprenant->formation_id); // Utiliser l'ID de la formation de l'apprenant
                     }]);
             }])
             ->firstOrFail();
-
-        $data['formation']['disciplines'] = $formation->disciplines->map(function ($discipline) {
+        $data['formation']['disciplines'] = $formation->disciplines->map(function ($discipline, ) use($formation) {
             return [
                 'id' => $discipline->id,
+                'titre' => $formation->titre,
                 'nom' => $discipline->nom,
                 'description' => $discipline->description,
                 'heures_hebdo' => $discipline->heures_hebdo ?? 0,
@@ -38,5 +39,4 @@ class DisciplineController extends Controller
 
         return Inertia::render('Apprenants/Disciplines', $data);
     }
-
 }
