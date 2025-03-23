@@ -57,7 +57,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt.value = e;
     isInstallable.value = true;
-    alert('kk')
+    // alert('kk')
 });
 
 
@@ -83,7 +83,6 @@ const resetPWA = async () => {
         }
         await navigator.serviceWorker.register('/service-worker.js');
         console.log('Service Worker réinitialisé');
-        // window.location.reload(); // Recharge pour déclencher beforeinstallprompt
     }
 };
 
@@ -92,9 +91,6 @@ onMounted(() => {
     resetPWA();
 });
 
-const showFallback = () => {
-    alert('Ajoutez cette page à votre écran d’accueil via le menu du navigateur (ex. "Ajouter à l’écran d’accueil" sur Chrome).');
-};
 </script>
 
 <template>
@@ -237,11 +233,11 @@ const showFallback = () => {
                             <i class="fas fa-download w-6 text-white"></i>
                             <span class="flex-1">Installer l’app</span>
                         </button>
-                        <button v-else @click="showFallback"
+                        <!-- <button v-else @click="showFallback"
                             class="nav-link w-full text-left bg-gray-600 hover:bg-gray-700">
                             <i class="fas fa-plus w-6 text-white"></i>
                             <span class="flex-1">Ajouter manuellement</span>
-                        </button>
+                        </button> -->
                     </div>
                 </nav>
 

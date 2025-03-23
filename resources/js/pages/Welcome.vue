@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import { defineProps } from 'vue';
 import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
-
+import TextLink from '@/components/TextLink.vue';
 ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
 
 const props = defineProps<{
@@ -40,6 +40,8 @@ const chartOptions = {
         x: { title: { display: true, text: 'Temps' } },
     },
 };
+
+
 </script>
 
 <template>
@@ -57,14 +59,11 @@ const chartOptions = {
                     </h1>
                 </div>
                 <nav class="flex gap-2 sm:gap-4">
-                    <Link v-if="isAuthenticated" :href="route('dashboard')"
-                        class="bg-indigo-500 px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-indigo-600 transition-all duration-300 flex items-center text-sm sm:text-base animate-pulse">
-                    <i class="fas fa-chalkboard-teacher mr-2"></i>Tableau de bord
-                    </Link>
-                    <Link v-else :href="route('login')"
+                   
+                    <TextLink :href="route('login')"
                         class="bg-indigo-500 px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-indigo-600 transition-all duration-20000 flex items-center text-sm sm:text-base animate-pulse">
                     <i class="fas fa-sign-in-alt mr-2"></i>Se connecter
-                    </Link>
+                    </TextLink>
                 </nav>
             </div>
         </header>
@@ -83,14 +82,11 @@ const chartOptions = {
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in"
                     style="animation-delay: 0.6s;">
-                    <Link v-if="!isAuthenticated" :href="route('login')"
+                    <TextLink :href="route('login')"
                         class="bg-indigo-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg hover:bg-indigo-700 transition-all duration-500 flex items-center justify-center text-base sm:text-lg shadow-lg hover:shadow-xl">
                     <i class="fas fa-briefcase mr-2 animate-spin-slow"></i>Boostez votre avenir
-                    </Link>
-                    <Link v-if="isAuthenticated" :href="route('dashboard')"
-                        class="bg-green-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg hover:bg-green-700 transition-all duration-500 flex items-center justify-center text-base sm:text-lg shadow-lg hover:shadow-xl">
-                    <i class="fas fa-tachometer-alt mr-2 animate-spin-slow"></i>Mon espace pro
-                    </Link>
+                    </TextLink>
+                  
                 </div>
             </div>
             <div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
