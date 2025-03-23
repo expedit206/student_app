@@ -48,7 +48,9 @@ class ApprenantController extends Controller
 
         // Détails des disciplines
         $disciplinesData = $formation->disciplines->map(function ($discipline) use ($formation) {
-            $hasNote = $formation->notes->where('discipline_id', $discipline->id)->isNotEmpty();
+            $hasNote = $formation->notes->where('discipline_id', $discipline->id)
+            ->where('apprenant_id', $formation->apprenant_id) 
+            ->isNotEmpty();
             return [
                 'id' => $discipline->id,
                 'name' => $discipline->nom,
@@ -76,50 +78,32 @@ class ApprenantController extends Controller
         $user = $request->user();
         $apprenant = Apprenant::where('user_id', $user->id)->firstOrFail();
 
-        $formation = $apprenant->formation()
-            ->with(['disciplines.formateurs', 'notes' => function ($query) use ($apprenant) {
-                $query->where('apprenant_id', $apprenant->id)
-                    ->select('id', 'apprenant_id', 'discipline_id', 'note', 'created_at');
-            }])
-            ->first();
-
-        if (!$formation) {
-            return Inertia::render('Apprenant/Carnet', ['carnetData' => null]);
-        }
-        $formation = $formation->load('notes');
-        $disciplines = $formation->disciplines->map(function ($discipline) use ($formation , $apprenant) {
-            $notes = $formation->notes->where('discipline_id', $discipline->id)->pluck('note');
-            // $formations = $apprenant->formation()->with('notes')->get();
-            // dd($formation->notes);
-            $moyenne = $notes->avg();
-
-            // Récupérer le formateur lié à cette discipline ET cette formation
-            $formateur = $discipline->formateurs()
-                ->wherePivot('formation_id', $formation->id)
-                ->first();
-
-            return [
-                'id' => $discipline->id,
-                'titre' => $discipline->nom,
-                'heures_hebdo' => $discipline->heures_hebdo ?? 0,
-                'heures_total' => $discipline->heures_total ?? 0,
-                'formateur' => $formateur ? $formateur->nom : 'Non attribué',
-                'coefficient' => ($discipline->heures_total ?? 0) / 10,
-                'notes' => $notes->implode(', ') ?: 'Aucune',
-                'moyenne' => $moyenne ? round($moyenne, 2) : null,
-                'statut' => $moyenne ? ($moyenne >= 10 ? 'Validé' : 'À améliorer') : 'N/A',
-            ];
-        });
-
-        $carnetData = [
+        $formation = $apprenant->formation()->with(['disciplines' => function ($query) use ($apprenant) {
+            $query->with(['formateurs' => function ($q) use ($apprenant) {
+                $q->select('formateurs.id', 'nom')->wherePivot('formation_id', $apprenant->formation_id);
+            }]);
+        }])->firstOrFail();
+        $data['carnetData'] = [
             'titre' => $formation->titre,
-            'disciplines' => $disciplines,
-            'moyenne_formation' => $disciplines->pluck('moyenne')->filter()->avg(),
-            'total_heures' => $disciplines->sum('heures_total'),
+            'ecole' => 'Centre de formation Professionnel la Canadienne', // À remplacer par une valeur dynamique si nécessaire
+            'apprenant' => $user->apprenant->nom,
+            'annee_scolaire' => '2024-2025', // À dynamiser (ex. via une config ou DB)
+            'disciplines' => $formation->disciplines->map(function ($discipline) use($apprenant) {
+                return [
+                    'id' => $discipline->id,
+                    'titre' => $discipline->nom,
+                    'heures_hebdo' => $discipline->heures_hebdo ?? 0,
+                    'heures_total' => $discipline->heures_total ?? 0,
+                    'formateur' => $discipline->formateurs->first()->nom ?? 'Non attribué',
+                    'coefficient' => ($discipline->heures_total ?? 0) / 10,
+                    'note' => $discipline->notes()->where('apprenant_id', $apprenant->id)->pluck('note') ?? 'N/A', // À ajuster selon votre modèle de notes
+                    'statut' => $discipline->notes()->where('apprenant_id', $apprenant->id)->pluck('note') ?'Terminé': 'En cours', // À ajuster selon votre logique
+                ];
+            })->all(),
+            'total_heures' => $formation->disciplines->sum('heures_total'),
+            'moyenne_formation' => $formation->moyenne ?? null, // À calculer si nécessaire
         ];
 
-        return Inertia::render('Apprenants/Carnet', [
-            'carnetData' => $carnetData,
-        ]);
+        return Inertia::render('Apprenants/Carnet', $data);
     }
 }
