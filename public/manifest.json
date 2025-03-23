@@ -856,10 +856,10 @@
       "__plugin-vue_export-helper-DlAUqK2U.js"
     ]
   },
-    "name": "Ma Progression",
-    "short_name": "Progression",
+    "name": "Student_App",
+    "short_name": "Student_App",
     "description": "Suivez votre progression dans vos formations",
-    "start_url": "/progression",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#1f2937",
     "theme_color": "#0d9488",
