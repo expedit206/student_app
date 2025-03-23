@@ -62,7 +62,7 @@ const chartOptions = {
                     <i class="fas fa-chalkboard-teacher mr-2"></i>Tableau de bord
                     </Link>
                     <Link v-else :href="route('login')"
-                        class="bg-indigo-500 px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-indigo-600 transition-all duration-300 flex items-center text-sm sm:text-base animate-pulse">
+                        class="bg-indigo-500 px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-indigo-600 transition-all duration-20000 flex items-center text-sm sm:text-base animate-pulse">
                     <i class="fas fa-sign-in-alt mr-2"></i>Se connecter
                     </Link>
                 </nav>

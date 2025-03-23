@@ -18,7 +18,7 @@ use App\Http\Controllers\Formateur\FormateurDashboardController;
 
 
 
-Route::get('/', [WelcomeController::class, 'welcome'])->name('welcome');
+Route::get('/', [WelcomeController::class, 'welcome'])->name('welcome')->middleware('guest');
 Route::middleware(['auth', 'userRole:formateur'])->group(function () {
 
     
