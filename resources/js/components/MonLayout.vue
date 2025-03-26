@@ -6,6 +6,19 @@ import { route } from 'ziggy-js';
 import TextLink from './TextLink.vue';
 import axios from 'axios';
 
+
+import { useAppearance } from '@/composables/useAppearance';
+import { Monitor, Moon, Sun } from 'lucide-vue-next';
+
+
+const { appearance, updateAppearance } = useAppearance();
+
+const tabs = [
+    { value: 'light', Icon: Sun, label: 'Light' },
+    { value: 'dark', Icon: Moon, label: 'Dark' },
+] as const;
+
+
 const isSidebarExpanded = ref(true); // État pour desktop (étendu/réduit)
 const isSidebarVisible = ref(false); // État pour mobile (visible/caché)
 const isMobile = ref(false); // État pour détecter mobile
@@ -115,8 +128,22 @@ onUnmounted(() => {
 </script>
 
 <template>
+
+    
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex overflow-hidden">
         <!-- Sidebar -->
+        <div :class="['inline-flex gap-1 rounded-lg  p-1']"
+            class="absolute top-0 right-0 mt-1 dark:bg-slate-600 bg-slate-300 mr-4 z-10  md:flex">
+            <button v-for="{ value, Icon, label } in tabs" :key="value" @click="updateAppearance(value)" :class="[
+                'flex items-center rounded-md px-2 py-[.2rem] transition-colors',
+                appearance === value
+                    ? 'bg-white shadow-sm text-neutral-900 dark:bg-neutral-700 dark:text-neutral-100'
+                    : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/60 dark:hover:text-neutral-100',
+            ]">
+                <component :is="Icon" class="-ml-1 h-4 w-4" />
+                <!-- <span class="ml-1.5 text-sm">{{ label }}</span> -->
+            </button>
+        </div>
         <aside :class="['sidebar flex-shrink-0 bg-gradient-to-b from-gray-200 dark:from-gray-800 to-gray-300 dark:to-gray-900 shadow-xl transition-all duration-300 fixed top-0 left-0 h-full z-20',
             {
                 'w-64': (!isMobile && isSidebarExpanded) || (isMobile && isSidebarVisible),
@@ -259,7 +286,8 @@ onUnmounted(() => {
                             <div v-for="notification in localNotifications" :key="notification.id"
                                 class="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200">
                                 <p class="text-sm text-gray-900 dark:text-white">{{ notification.message }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ notification.created_at }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ notification.created_at }}
+                                </p>
                                 <button @click="markAsRead(notification.id)"
                                     class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 text-xs mt-2 transition-colors">
                                     Marquer comme lu
@@ -306,8 +334,8 @@ onUnmounted(() => {
                                 :href="route('profile.edit')" as="button">
                                 Paramètres
                             </TextLink>
-                            <TextLink class="block px-4 py-2 hover:bg-gray-300 dark:hover:bg-gray-700 transition-all" method="post"
-                                :href="route('logout')" as="button">
+                            <TextLink class="block px-4 py-2 hover:bg-gray-300 dark:hover:bg-gray-700 transition-all"
+                                method="post" :href="route('logout')" as="button">
                                 Déconnexion
                             </TextLink>
                         </DropdownMenuContent>
@@ -324,7 +352,8 @@ onUnmounted(() => {
                 <i class="fas fa-bars text-lg"></i>
             </button>
             <slot></slot>
-            <div class="scroll-hint bg-indigo-500 dark:bg-indigo-400 text-white px-3 py-1 rounded-full text-xs">Défiler</div>
+            <div class="scroll-hint bg-indigo-500 dark:bg-indigo-400 text-white px-3 py-1 rounded-full text-xs">Défiler
+            </div>
         </main>
     </div>
 </template>
