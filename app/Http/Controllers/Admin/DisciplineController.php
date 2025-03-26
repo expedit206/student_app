@@ -12,7 +12,7 @@ class DisciplineController extends Controller
 
     public function index()
     {
-        $disciplines = Discipline::with('formations')->orderBy('id', 'desc')->get();
+        $disciplines = Discipline::with('formations', 'formateurs')->orderBy('id', 'desc')->get();
         $formations = Formation::all();
 
         return inertia('Admin/Disciplines/Index', [
