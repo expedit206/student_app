@@ -32,7 +32,6 @@ watch([search, selectedFormation], () => {
 function filterApprenants() {
     let result = [...props.apprenants];
 
-    // Filtre par recherche textuelle
     if (search.value) {
         result = result.filter(apprenant =>
             (apprenant.nom?.toLowerCase().includes(search.value.toLowerCase()) || '') ||
@@ -41,8 +40,7 @@ function filterApprenants() {
         );
     }
 
-    // Filtre par formation
-    if (selectedFormation.value && selectedFormation.value !== 'Toutes') {
+    if (selectedFormation.value && selectedFormation.value !== 'Choisir une formation') {
         result = result.filter(apprenant =>
             (apprenant.formation?.titre || 'Non assignée') === selectedFormation.value
         );
@@ -62,17 +60,13 @@ function deleteApprenant(id: number) {
     }
 }
 
-// Calcul des éléments paginés
 const paginatedApprenants = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return filteredApprenants.value.slice(start, end);
 });
 
-// Nombre total de pages
 const totalPages = computed(() => Math.ceil(filteredApprenants.value.length / itemsPerPage));
-
-// Nombre total d'apprenants
 const totalApprenants = computed(() => filteredApprenants.value.length);
 
 function previousPage() {
@@ -82,6 +76,16 @@ function previousPage() {
 function nextPage() {
     if (currentPage.value < totalPages.value) currentPage.value++;
 }
+
+// Couleurs dynamiques pour les icônes
+const iconColors = {
+    base: 'text-blue-500',
+    hover: 'text-blue-400',
+    delete: 'text-red-500',
+    deleteHover: 'text-red-400',
+    edit: 'text-yellow-500',
+    editHover: 'text-yellow-400',
+};
 </script>
 
 <template>
@@ -90,32 +94,31 @@ function nextPage() {
     <MonLayout>
         <div class="container mx-auto px-4 py-3 text-gray-900 dark:text-gray-100">
             <!-- Header -->
-            <div class="flex items-center justify-between mb-3 animate-fade-in">
-                <h1 class="text-3xl font-extrabold flex items-center">
-                    <i class="fas fa-user-graduate mr-3 text-blue-500 dark:text-blue-400"></i>
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-3 animate-fade-in">
+                <h1 class="text-2xl sm:text-3xl font-extrabold flex items-center">
+                    <i :class="['fas fa-user-graduate mr-3', iconColors.base, 'transition-colors duration-300']"></i>
                     Liste des Étudiants
                 </h1>
                 <TextLink :href="route('apprenants.create')"
-                    class="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition-all duration-300 flex items-center">
-                    <i class="fas fa-plus mr-2"></i>
+                    class="mt-2 sm:mt-0 bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition-all duration-300 flex items-center">
+                    <i class="fas fa-plus mr-2 transition-colors duration-300 hover:text-green-300"></i>
                     Ajouter
                 </TextLink>
             </div>
 
             <!-- Filtres -->
-            <div class="flex flex-col sm:flex-row sm:space-x-4 mb-4 animate-slide-up"
+            <div class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 mb-4 animate-slide-up"
                 :style="{ animationDelay: '0.2s' }">
                 <div class="relative flex-1">
                     <i
-                        class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"></i>
-                    <input type="text" v-model="search" placeholder="Rechercher par nom, prénom ou email..."
-                        class="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 dark:text-gray-100" />
+                        :class="['fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2', iconColors.base]"></i>
+                    <input type="text" v-model="search" placeholder="Rechercher..."
+                        class="w-full pl-12 pr-4 py-2 sm:py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 dark:text-gray-100 text-sm sm:text-base" />
                 </div>
-                <div class="relative mt-2 sm:mt-0 sm:w-48">
-                    <i
-                        class="fas fa-book absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"></i>
+                <div class="relative sm:w-48">
+                    <i :class="['fas fa-book absolute left-4 top-1/2 transform -translate-y-1/2', iconColors.base]"></i>
                     <select v-model="selectedFormation"
-                        class="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 dark:text-gray-100">
+                        class="w-full pl-12 pr-4 py-2 sm:py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 dark:text-gray-100 text-sm sm:text-base">
                         <option v-for="formation in formations" :key="formation" :value="formation">
                             {{ formation }}
                         </option>
@@ -123,41 +126,42 @@ function nextPage() {
                 </div>
             </div>
 
-            <!-- Compteur d'apprenants -->
-            <div class="mb-4 text-gray-600 dark:text-gray-300">
+            <!-- Compteur -->
+            <div class="mb-4 text-gray-600 dark:text-gray-300 text-sm sm:text-base">
                 <span>{{ totalApprenants }} apprenants trouvés</span>
             </div>
 
-            <!-- Tableau -->
-            <div class="overflow-x-auto rounded-xl shadow-lg bg-white dark:bg-gray-800 animate-fade-in"
+            <!-- Tableau (Desktop) / Cartes (Mobile) -->
+            <div class="rounded-xl shadow-lg bg-white dark:bg-gray-800 animate-fade-in"
                 :style="{ animationDelay: '0.4s' }">
-                <div class="max-h-[60vh] overflow-y-auto relative">
+                <!-- Desktop : Tableau -->
+                <div class="hidden sm:block max-h-[60vh] overflow-y-auto relative">
                     <table class="min-w-full table-fixed">
                         <thead class="bg-gray-100 dark:bg-gray-700 sticky top-0 z-10">
                             <tr>
                                 <th
                                     class="w-16 px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 text-sm">
-                                    <i class="fas fa-id-badge mr-1"></i>ID
+                                    <i :class="['fas fa-id-badge mr-1', iconColors.base]"></i>ID
                                 </th>
                                 <th
                                     class="w-28 px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 text-sm">
-                                    <i class="fas fa-user mr-1"></i>Nom
+                                    <i :class="['fas fa-user mr-1', iconColors.base]"></i>Nom
                                 </th>
                                 <th
                                     class="w-28 px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 text-sm">
-                                    <i class="fas fa-user-circle mr-1"></i>Prénom
+                                    <i :class="['fas fa-user-circle mr-1', iconColors.base]"></i>Prénom
                                 </th>
                                 <th
                                     class="w-48 px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 text-sm">
-                                    <i class="fas fa-envelope mr-1"></i>Email
+                                    <i :class="['fas fa-envelope mr-1', iconColors.base]"></i>Email
                                 </th>
                                 <th
                                     class="w-36 px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 text-sm">
-                                    <i class="fas fa-book mr-1"></i>Formation
+                                    <i :class="['fas fa-book mr-1', iconColors.base]"></i>Formation
                                 </th>
                                 <th
                                     class="w-40 px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 text-sm">
-                                    <i class="fas fa-cogs mr-1"></i>Actions
+                                    <i :class="['fas fa-cogs mr-1', iconColors.base]"></i>Actions
                                 </th>
                             </tr>
                         </thead>
@@ -181,12 +185,12 @@ function nextPage() {
                                 </td>
                                 <td class="px-2 py-3 flex space-x-2">
                                     <TextLink :href="route('apprenants.edit', apprenant.id)"
-                                        class="text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300 transition-colors duration-200 flex items-center text-sm">
+                                        :class="['flex items-center text-sm', iconColors.edit, 'hover:' + iconColors.editHover, 'transition-colors duration-200']">
                                         <i class="fas fa-edit mr-1 animate-pulse"></i>
                                         Modifier
                                     </TextLink>
                                     <button @click="deleteApprenant(apprenant.id)"
-                                        class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors duration-200 flex items-center text-sm">
+                                        :class="['flex items-center text-sm', iconColors.delete, 'hover:' + iconColors.deleteHover, 'transition-colors duration-200']">
                                         <i class="fas fa-trash mr-1 animate-pulse"></i>
                                         Supprimer
                                     </button>
@@ -194,26 +198,63 @@ function nextPage() {
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile : Cartes -->
+                <div class="sm:hidden space-y-3 p-3 max-h-[60vh] overflow-y-auto">
+                    <div v-for="(apprenant, index) in paginatedApprenants" :key="apprenant.id"
+                        class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 animate-row-in"
+                        :style="{ animationDelay: `${0.1 * index}s` }">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                    <i :class="['fas fa-user mr-2', iconColors.base]"></i>
+                                    {{ apprenant.nom }} {{ apprenant.prenom }}
+                                </p>
+                                <p class="text-xs text-gray-600 dark:text-gray-300 truncate"
+                                    :title="apprenant.user?.email">
+                                    <i :class="['fas fa-envelope mr-2', iconColors.base]"></i>
+                                    {{ apprenant.user?.email || 'N/A' }}
+                                </p>
+                                <p class="text-xs mt-1">
+                                    <span
+                                        class="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-300 px-2 py-1 rounded-full">
+                                        {{ apprenant.formation?.titre || 'Non assignée' }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <TextLink :href="route('apprenants.edit', apprenant.id)"
+                                    :class="['text-sm', iconColors.edit, 'hover:' + iconColors.editHover, 'transition-colors duration-200']">
+                                    <i class="fas fa-edit"></i>
+                                </TextLink>
+                                <button @click="deleteApprenant(apprenant.id)"
+                                    :class="['text-sm', iconColors.delete, 'hover:' + iconColors.deleteHover, 'transition-colors duration-200']">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <div v-if="filteredApprenants.length === 0"
-                        class="p-6 text-center text-gray-500 dark:text-gray-400 animate-pulse">
-                        <i class="fas fa-exclamation-circle mr-2 text-xl"></i>
+                        class="p-4 text-center text-gray-500 dark:text-gray-400 animate-pulse">
+                        <i class="fas fa-exclamation-circle mr-2 text-lg"></i>
                         Aucun étudiant trouvé
                     </div>
                 </div>
 
-                <!-- Pagination compacte -->
+                <!-- Pagination -->
                 <div v-if="filteredApprenants.length > 0"
-                    class="flex justify-between items-center py-2 px-4 bg-gray-50 dark:bg-gray-700 rounded-b-lg text-sm">
+                    class="flex flex-col sm:flex-row justify-between items-center py-2 px-4 bg-gray-50 dark:bg-gray-700 rounded-b-lg text-sm space-y-2 sm:space-y-0">
                     <button @click="previousPage" :disabled="currentPage === 1"
-                        class="px-2 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300 dark:disabled:bg-gray-600 hover:bg-blue-600 transition-all duration-200">
-                        <i class="fas fa-arrow-left"></i>
+                        class="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300 dark:disabled:bg-gray-600 hover:bg-blue-600 transition-all duration-200">
+                        <i class="fas fa-arrow-left mr-2"></i>Précédent
                     </button>
                     <span class="text-gray-700 dark:text-gray-200">
                         {{ currentPage }} / {{ totalPages }}
                     </span>
                     <button @click="nextPage" :disabled="currentPage === totalPages"
-                        class="px-2 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300 dark:disabled:bg-gray-600 hover:bg-blue-600 transition-all duration-200">
-                        <i class="fas fa-arrow-right"></i>
+                        class="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300 dark:disabled:bg-gray-600 hover:bg-blue-600 transition-all duration-200">
+                        <i class="fas fa-arrow-right mr-2"></i>Suivant
                     </button>
                 </div>
             </div>
@@ -319,5 +360,39 @@ td {
 
 .dark .max-h-[60vh]::-webkit-scrollbar-thumb:hover {
     background: #d1d5db;
+}
+
+/* Réactivité mobile */
+@media (max-width: 640px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .text-3xl {
+        font-size: 1.5rem;
+    }
+
+    .text-sm {
+        font-size: 0.875rem;
+    }
+
+    .px-2 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .py-3 {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .space-x-2>*+* {
+        margin-left: 0.5rem;
+    }
+
+    .shadow-lg {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 }
 </style>

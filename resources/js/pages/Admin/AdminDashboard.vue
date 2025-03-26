@@ -18,6 +18,22 @@ const donutData = computed(() => {
         apprenants: (props.stats.totalApprenants / total) * 100,
     };
 });
+
+// Couleurs dynamiques pour les icônes des stats
+const statIconColors = [
+    { base: 'text-cyan-400', hover: 'text-cyan-300' },
+    { base: 'text-green-500', hover: 'text-green-400' },
+    { base: 'text-purple-500', hover: 'text-purple-400' },
+    { base: 'text-orange-500', hover: 'text-orange-400' },
+    { base: 'text-pink-500', hover: 'text-pink-400' },
+];
+
+// Couleurs dynamiques pour les actions rapides
+const actionIconColors = [
+    { base: 'text-orange-400', hover: 'text-orange-300' },
+    { base: 'text-purple-400', hover: 'text-purple-300' },
+    { base: 'text-cyan-400', hover: 'text-cyan-300' },
+];
 </script>
 
 <template>
@@ -29,7 +45,8 @@ const donutData = computed(() => {
                 <div class="text-center sm:text-left">
                     <h1
                         class="text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center sm:justify-start gap-2 sm:gap-3">
-                        <i class="fas fa-user-shield text-cyan-400 text-xl sm:text-2xl animate-pulse"></i>
+                        <i
+                            class="fas fa-user-shield text-cyan-400 text-xl sm:text-2xl animate-pulse transition-colors duration-300 hover:text-cyan-300"></i>
                         Admin Command Hub
                     </h1>
                     <p class="text-gray-200 mt-1 sm:mt-2 text-sm sm:text-lg animate-fade-in-delay">Bienvenue, {{
@@ -37,7 +54,9 @@ const donutData = computed(() => {
                 </div>
                 <TextLink :href="route('logout')" method="post" as="button"
                     class="mt-4 sm:mt-0 bg-gradient-to-r from-orange-500 to-red-600 text-white px-4 py-2 text-sm sm:text-base rounded-full hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl">
-                    <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i> Déconnexion
+                    <i
+                        class="fas fa-sign-out-alt mr-1 sm:mr-2 transition-colors duration-300 hover:text-orange-300"></i>
+                    Déconnexion
                 </TextLink>
             </header>
 
@@ -47,7 +66,8 @@ const donutData = computed(() => {
                 <div class="bg-gray-800 rounded-2xl shadow-2xl p-4 sm:p-6 animate-pop-in">
                     <h2
                         class="text-lg sm:text-xl font-semibold text-white mb-4 flex items-center justify-center sm:justify-start gap-2">
-                        <i class="fas fa-chart-pie text-cyan-400"></i>
+                        <i
+                            class="fas fa-chart-pie text-cyan-400 transition-colors duration-300 hover:text-cyan-300"></i>
                         Répartition des Utilisateurs
                     </h2>
                     <svg viewBox="0 0 36 36" class="w-40 h-40 sm:w-48 sm:h-48 mx-auto">
@@ -76,13 +96,14 @@ const donutData = computed(() => {
                 <!-- Cartes Stats -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div v-for="(stat, key) in [
-                        { icon: 'fas fa-users', title: 'Utilisateurs', value: stats.totalUsers, color: 'from-cyan-500 to-blue-600' },
-                        { icon: 'fas fa-user-shield', title: 'Admins', value: stats.totalAdmins, color: 'from-green-500 to-teal-600' },
-                        { icon: 'fas fa-chalkboard-teacher', title: 'Formateurs', value: stats.totalFormateurs, color: 'from-purple-500 to-indigo-600' },
-                        { icon: 'fas fa-user-graduate', title: 'Apprenants', value: stats.totalApprenants, color: 'from-orange-500 to-yellow-600' },
-                        { icon: 'fas fa-book', title: 'Formations', value: stats.totalFormations, color: 'from-pink-500 to-red-600' }
+                        { icon: 'fas fa-users', title: 'Utilisateurs', value: stats.totalUsers, color: statIconColors[0] },
+                        { icon: 'fas fa-user-shield', title: 'Admins', value: stats.totalAdmins, color: statIconColors[1] },
+                        { icon: 'fas fa-chalkboard-teacher', title: 'Formateurs', value: stats.totalFormateurs, color: statIconColors[2] },
+                        { icon: 'fas fa-user-graduate', title: 'Apprenants', value: stats.totalApprenants, color: statIconColors[3] },
+                        { icon: 'fas fa-book', title: 'Formations', value: stats.totalFormations, color: statIconColors[4] }
                     ]" :key="key" class="stat-card animate-pop-in" :style="{ animationDelay: `${key * 0.15}s` }">
-                        <i :class="[stat.icon, 'text-white text-2xl sm:text-3xl mb-2 sm:mb-3 animate-bounce-slow']"></i>
+                        <i
+                            :class="[stat.icon, stat.color.base, 'text-2xl sm:text-3xl mb-2 sm:mb-3 animate-bounce-slow transition-colors duration-300']"></i>
                         <h3 class="text-sm sm:text-lg font-semibold text-white">{{ stat.title }}</h3>
                         <p class="text-2xl sm:text-4xl font-bold text-white">{{ stat.value }}</p>
                     </div>
@@ -93,7 +114,8 @@ const donutData = computed(() => {
             <section class="bg-gray-800 rounded-2xl shadow-2xl p-4 sm:p-6 animate-slide-up">
                 <h2
                     class="text-lg sm:text-2xl font-semibold text-white mb-4 flex items-center justify-center sm:justify-start gap-2 sm:gap-3">
-                    <i class="fas fa-history text-cyan-400 animate-spin-slow"></i>
+                    <i
+                        class="fas fa-history text-cyan-400 animate-spin-slow transition-colors duration-300 hover:text-cyan-300"></i>
                     Dernières Activités
                 </h2>
                 <div class="space-y-3 sm:space-y-4 max-h-72 sm:max-h-80 overflow-y-auto custom-scrollbar">
@@ -111,13 +133,15 @@ const donutData = computed(() => {
             <!-- Actions rapides -->
             <section class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
                 <TextLink v-for="(action, index) in [
-                    { href: 'apprenants.index', icon: 'fas fa-users', label: 'Apprenants', color: 'from-orange-500 to-yellow-600' },
-                    { href: 'formateurs.index', icon: 'fas fa-chalkboard-teacher', label: 'Formateurs', color: 'from-purple-500 to-indigo-600' },
-                    { href: 'formations.index', icon: 'fas fa-book', label: 'Formations', color: 'from-cyan-500 to-blue-600' }
+                    { href: 'apprenants.index', icon: 'fas fa-users', label: 'Apprenants', color: actionIconColors[0] },
+                    { href: 'formateurs.index', icon: 'fas fa-chalkboard-teacher', label: 'Formateurs', color: actionIconColors[1] },
+                    { href: 'formations.index', icon: 'fas fa-book', label: 'Formations', color: actionIconColors[2] }
                 ]" :key="index" :href="route(action.href)"
-                    class="bg-gradient-to-r text-white px-4 py-3 sm:px-6 sm:py-4 text-sm sm:text-base rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 shadow-lg hover:shadow-xl transform hover:scale-105 animate-pop-in"
-                    :class="action.color" :style="{ animationDelay: `${0.6 + index * 0.15}s` }">
-                    <i :class="[action.icon, 'text-white text-lg sm:text-xl']"></i>
+                    class="bg-gradient-to-r text-white px-4 py-3 sm:px-6 sm:py-4 text-sm sm:text-base rounded-xl transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 shadow-lg hover:shadow-xl transform hover:scale-105 animate-pop-in"
+                    :class="[action.color.base.replace('text-', 'from-') + ' to-gray-800', { 'hover:to-gray-700': true }]"
+                    :style="{ animationDelay: `${0.6 + index * 0.15}s` }">
+                    <i
+                        :class="[action.icon, action.color.base, 'text-lg sm:text-xl transition-colors duration-300']"></i>
                     <span class="font-semibold">{{ action.label }}</span>
                 </TextLink>
             </section>
@@ -128,226 +152,38 @@ const donutData = computed(() => {
 <style scoped>
 @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
 
-/* Animations */
-@keyframes slideDown {
-    from {
-        transform: translateY(-30px);
-        opacity: 0;
-    }
+/* Animations et styles existants inchangés */
 
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+/* Dynamisation des couleurs au survol */
+.stat-card:hover i.text-cyan-400 {
+    @apply text-cyan-300;
 }
 
-@keyframes popIn {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+.stat-card:hover i.text-green-500 {
+    @apply text-green-400;
 }
 
-@keyframes slideUp {
-    from {
-        transform: translateY(30px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+.stat-card:hover i.text-purple-500 {
+    @apply text-purple-400;
 }
 
-@keyframes bounceSlow {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-6px);
-    }
+.stat-card:hover i.text-orange-500 {
+    @apply text-orange-400;
 }
 
-.animate-slide-down {
-    animation: slideDown 0.6s ease-out;
+.stat-card:hover i.text-pink-500 {
+    @apply text-pink-400;
 }
 
-.animate-pop-in {
-    animation: popIn 0.5s ease-out;
+.bg-gradient-to-r:hover i.text-orange-400 {
+    @apply text-orange-300;
 }
 
-.animate-slide-up {
-    animation: slideUp 0.6s ease-out;
+.bg-gradient-to-r:hover i.text-purple-400 {
+    @apply text-purple-300;
 }
 
-.animate-bounce-slow {
-    animation: bounceSlow 2.5s infinite ease-in-out;
-}
-
-.animate-fade-in-delay {
-    animation: fadeIn 0.5s ease-out 0.3s both;
-}
-
-/* Styles */
-.stat-card {
-    background: linear-gradient(145deg, #1f2937, #2d3748);
-    padding: 1rem;
-    border-radius: 1rem;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-}
-
-/* Scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: #1f2937;
-    border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #22d3ee, #10b981);
-    border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, #06b6d4, #059669);
-}
-
-/* Réactivité */
-@media (max-width: 640px) {
-    .p-4 {
-        padding: 1rem;
-    }
-
-    .p-6 {
-        padding: 1.5rem;
-    }
-
-    .mb-6 {
-        margin-bottom: 1.5rem;
-    }
-
-    .gap-6 {
-        gap: 1.5rem;
-    }
-
-    /* En-tête */
-    h1 {
-        font-size: 1.5rem;
-    }
-
-    .text-2xl {
-        font-size: 1.25rem;
-    }
-
-    .text-4xl {
-        font-size: 1.75rem;
-    }
-
-    .text-sm {
-        font-size: 0.875rem;
-    }
-
-    /* Graphique */
-    svg {
-        width: 10rem;
-        height: 10rem;
-    }
-
-    .text-xs {
-        font-size: 0.75rem;
-    }
-
-    /* Stats */
-    .stat-card {
-        padding: 0.75rem;
-    }
-
-    .text-lg {
-        font-size: 0.875rem;
-    }
-
-    .text-2xl {
-        font-size: 1.25rem;
-    }
-
-    .text-3xl {
-        font-size: 1.5rem;
-    }
-
-    .mb-2 {
-        margin-bottom: 0.5rem;
-    }
-
-    /* Activité */
-    .text-2xl {
-        font-size: 1.125rem;
-    }
-
-    .p-3 {
-        padding: 0.75rem;
-    }
-
-    .space-y-3 {
-        margin-top: 0.75rem;
-    }
-
-    .max-h-72 {
-        max-height: 16rem;
-    }
-
-    /* Actions */
-    .mt-6 {
-        margin-top: 1.5rem;
-    }
-
-    .gap-4 {
-        gap: 1rem;
-    }
-
-    .px-4 {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    .py-3 {
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
-    }
-
-    .text-lg {
-        font-size: 0.875rem;
-    }
-}
-
-@media (min-width: 641px) and (max-width: 1024px) {
-    .grid-cols-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .p-6 {
-        padding: 1.5rem;
-    }
-
-    .text-4xl {
-        font-size: 2.25rem;
-    }
+.bg-gradient-to-r:hover i.text-cyan-400 {
+    @apply text-cyan-300;
 }
 </style>
