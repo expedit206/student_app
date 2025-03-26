@@ -66,7 +66,15 @@ const submit = () => {
                             autocomplete="name" placeholder="Full name" />
                         <div v-else
                             class="mt-1 block w-full px-3 py-2 bg-gray-100 text-gray-700 border border-gray-300 rounded-md">
-                            {{ user.apprenant.nom }} {{ user.apprenant.prenom }}
+                            <div v-if="user.role!='admin'">
+
+                                {{ user.apprenant?.nom }} {{ user.apprenant?.prenom }}
+                                {{ user.formateur?.nom }} {{ user.formateur?.prenom }}
+                            </div>
+                            <div v-else>
+                                {{ user.email }} 
+                            </div>
+                            <!-- {{ user.admin?.nom }} {{ user.admin?.prenom }} -->
                         </div>
                         <InputError class="mt-2" :message="form.errors.name" />
                     </div>

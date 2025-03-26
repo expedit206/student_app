@@ -115,9 +115,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gray-900 text-gray-100 flex overflow-hidden">
+    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex overflow-hidden">
         <!-- Sidebar -->
-        <aside :class="['sidebar flex-shrink-0 bg-gradient-to-b from-gray-800 to-gray-900 shadow-xl transition-all duration-300 fixed top-0 left-0 h-full z-20',
+        <aside :class="['sidebar flex-shrink-0 bg-gradient-to-b from-gray-200 dark:from-gray-800 to-gray-300 dark:to-gray-900 shadow-xl transition-all duration-300 fixed top-0 left-0 h-full z-20',
             {
                 'w-64': (!isMobile && isSidebarExpanded) || (isMobile && isSidebarVisible),
                 'w-16': !isMobile && !isSidebarExpanded,
@@ -125,17 +125,17 @@ onUnmounted(() => {
             }]">
             <div class="flex flex-col h-full">
                 <!-- Logo et Toggle -->
-                <div class="p-4 flex items-center justify-between bg-gray-900">
+                <div class="p-4 flex items-center justify-between bg-gray-300 dark:bg-gray-900">
                     <div v-if="(!isMobile && isSidebarExpanded) || (isMobile && isSidebarVisible)"
                         class="flex items-center gap-3">
                         <div class="bg-white p-1 rounded-full shadow-md">
                             <img src="/img/logo.png" alt="Logo CFPCa"
                                 class="h-10 w-10 rounded-full animate-spin-slow" />
                         </div>
-                        <span class="text-lg font-bold text-white">CFPCa</span>
+                        <span class="text-lg font-bold text-gray-900 dark:text-white">CFPCa</span>
                     </div>
                     <button @click="toggleSidebar"
-                        class="text-gray-200 hover:text-white p-2 rounded-full hover:bg-gray-600 transition-all ml-auto">
+                        class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white p-2 rounded-full hover:bg-gray-400 dark:hover:bg-gray-600 transition-all ml-auto">
                         <i :class="isMobile ? (isSidebarVisible ? 'fas fa-times' : 'fas fa-bars') : (isSidebarExpanded ? 'fas fa-chevron-left' : 'fas fa-chevron-right')"
                             class="text-lg"></i>
                     </button>
@@ -252,27 +252,27 @@ onUnmounted(() => {
 
                     <!-- Notifications -->
                     <div v-if="isApprenant && (!isMobile ? isSidebarExpanded : isSidebarVisible)" class="mt-6 px-4">
-                        <h3 class="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+                        <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3 flex items-center gap-2">
                             <i class="fas fa-bell text-indigo-400"></i> Notifications
                         </h3>
                         <div v-if="localNotifications.length" class="space-y-3 max-h-64 overflow-y-auto">
                             <div v-for="notification in localNotifications" :key="notification.id"
-                                class="p-3 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 transition-all duration-200">
-                                <p class="text-sm text-white">{{ notification.message }}</p>
-                                <p class="text-xs text-gray-400 mt-1">{{ notification.created_at }}</p>
+                                class="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200">
+                                <p class="text-sm text-gray-900 dark:text-white">{{ notification.message }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ notification.created_at }}</p>
                                 <button @click="markAsRead(notification.id)"
-                                    class="text-indigo-400 hover:text-indigo-300 text-xs mt-2 transition-colors">
+                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 text-xs mt-2 transition-colors">
                                     Marquer comme lu
                                 </button>
                             </div>
                         </div>
-                        <p v-else class="text-sm text-gray-400 italic">Aucune notification</p>
+                        <p v-else class="text-sm text-gray-500 dark:text-gray-400 italic">Aucune notification</p>
                     </div>
 
                     <!-- Bouton PWA -->
                     <div class="mt-4 px-4">
                         <button v-if="isInstallable" @click="installApp"
-                            class="nav-link w-full text-left bg-indigo-600 hover:bg-indigo-700">
+                            class="nav-link w-full text-left bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600">
                             <i class="fas fa-download w-6 text-white"></i>
                             <span v-if="!isMobile ? isSidebarExpanded : isSidebarVisible" class="flex-1">Installer
                                 l’app</span>
@@ -285,7 +285,7 @@ onUnmounted(() => {
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                             <button
-                                class="flex items-center justify-between w-full px-4 py-3 bg-gray-800 text-gray-200 rounded-lg hover:bg-gray-700 transition-all duration-300">
+                                class="flex items-center justify-between w-full px-4 py-3 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition-all duration-300">
                                 <span class="flex items-center gap-2">
                                     <i class="fas fa-user w-6 text-indigo-400"></i>
                                     <span v-if="!isMobile ? isSidebarExpanded : isSidebarVisible"
@@ -301,12 +301,12 @@ onUnmounted(() => {
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent v-if="!isMobile ? isSidebarExpanded : isSidebarVisible"
-                            class="bg-gray-800 text-gray-100 rounded-lg shadow-lg w-48">
-                            <TextLink class="block px-4 py-2 hover:bg-gray-700 transition-all"
+                            class="bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-lg w-48">
+                            <TextLink class="block px-4 py-2 hover:bg-gray-300 dark:hover:bg-gray-700 transition-all"
                                 :href="route('profile.edit')" as="button">
                                 Paramètres
                             </TextLink>
-                            <TextLink class="block px-4 py-2 hover:bg-gray-700 transition-all" method="post"
+                            <TextLink class="block px-4 py-2 hover:bg-gray-300 dark:hover:bg-gray-700 transition-all" method="post"
                                 :href="route('logout')" as="button">
                                 Déconnexion
                             </TextLink>
@@ -318,13 +318,13 @@ onUnmounted(() => {
 
         <!-- Main Content -->
         <main
-            :class="['flex-1 p-4 sm:p-6 bg-gray-800 overflow-y-auto transition-all duration-300 relative', isMobile ? 'ml-0' : (isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-16')]">
+            :class="['flex-1 p-4 sm:p-6 bg-gray-50 dark:bg-gray-800 overflow-y-auto transition-all duration-300 relative', isMobile ? 'ml-0' : (isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-16')]">
             <button v-if="isMobile && !isSidebarVisible" @click="toggleSidebar"
-                class="fixed top-4 left-4 z-30 bg-indigo-600 text-white p-2 rounded-full shadow-lg hover:bg-indigo-700 transition-all">
+                class="fixed top-4 left-4 z-30 bg-indigo-600 text-white p-2 rounded-full shadow-lg hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 transition-all">
                 <i class="fas fa-bars text-lg"></i>
             </button>
             <slot></slot>
-            <div class="scroll-hint bg-indigo-500 text-white px-3 py-1 rounded-full text-xs">Défiler</div>
+            <div class="scroll-hint bg-indigo-500 dark:bg-indigo-400 text-white px-3 py-1 rounded-full text-xs">Défiler</div>
         </main>
     </div>
 </template>
@@ -338,57 +338,54 @@ body {
 
 /* Animations */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 @keyframes spinSlow {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
-.animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
-}
-
-.animate-spin-slow {
-    animation: spinSlow 6s linear infinite;
-}
+.animate-fade-in { animation: fadeIn 0.5s ease-out; }
+.animate-spin-slow { animation: spinSlow 6s linear infinite; }
 
 /* Sidebar */
-.sidebar {
-    z-index: 20;
+.sidebar { z-index: 20; }
+
+html.dark .nav-link{
+    color: #d1d5db; /* gray-300 */
 }
 
 .nav-link {
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    color: #d1d5db;
+    color: #4b5563; /* gray-600 */
     border-left: 4px solid transparent;
     transition: all 0.3s ease;
 }
 
+html.dark .nav-link:hover{
+
+    background-color: #4b5563; /* gray-600 */
+    color: #ffffff; /* white */
+}
 .nav-link:hover {
-    background-color: #4b5563;
-    color: #ffffff;
+    background-color: #d1d5db; /* gray-300 */
+    color: #1f2937; /* gray-800 */
     transform: translateX(4px);
 }
 
+html.dark .nav-link.active{
+    background-color: #4f46e5; /* indigo-600 */
+    border-left-color: #ffffff; /* white */
+}
+
 .nav-link.active {
-    background-color: #4f46e5;
-    color: #ffffff;
-    border-left-color: #ffffff;
+    background-color: #4f46e5; /* indigo-600 */
+    color: #ffffff; /* white */
+    border-left-color: #1f2937; /* gray-800 */
     font-weight: 600;
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
 }
