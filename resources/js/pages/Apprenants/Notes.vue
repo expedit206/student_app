@@ -86,15 +86,15 @@ onMounted(() => {
                 <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
                     <i class="fas fa-list mr-2 text-teal-400"></i> Détail des Notes
                 </h3>
-                <div v-if="props.notesData.notes.length" class="space-y-3">
-                    <div v-for="note in props.notesData.notes" :key="note.id"
+                <div v-if="filteredNotes.length" class="space-y-3">
+                    <div v-for="note in filteredNotes" :key="note.id"
                         class="p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all flex items-center justify-between">
                         <div>
                             <p class="text-sm text-teal-300 font-medium">{{ note.discipline }}</p>
                             <p class="text-white">{{ note.note }} / {{ note.max_note }}</p>
                             <p class="text-xs text-gray-400">{{ note.commentaire }}</p>
                         </div>
-                        <span class="text-xs text-gray-400 whitespace-nowrap">{{ note.date }}</span>
+                        <span class="text-xs text-gray-400 whitespace-nowrap">{{ formatDate(note.date) }}</span>
                     </div>
                 </div>
                 <div v-else class="text-center text-gray-400 py-6">
@@ -107,6 +107,144 @@ onMounted(() => {
 
 <style scoped>
 @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+
+/* Styles par défaut (mode clair) */
+.bg-gradient-to-br.from-gray-900 {
+    background: linear-gradient(to bottom right, #f3f4f6, #e5e7eb);
+}
+
+.text-gray-100 {
+    color: #1f2937;
+}
+
+.text-white {
+    color: #111827;
+}
+
+.text-teal-400 {
+    color: #14b8a6;
+}
+
+.bg-gradient-to-r.from-indigo-700 {
+    background: linear-gradient(to right, #4338ca, #4f46e5);
+}
+
+.text-indigo-200 {
+    color: #c7d2fe;
+}
+
+.text-indigo-300 {
+    color: #a5b4fc;
+}
+
+.bg-gradient-to-r.from-purple-700 {
+    background: linear-gradient(to right, #7e22ce, #9333ea);
+}
+
+.text-purple-200 {
+    color: #e9d5ff;
+}
+
+.text-purple-300 {
+    color: #d8b4fe;
+}
+
+.bg-gray-700 {
+    background-color: #f9fafb;
+}
+
+.text-gray-200 {
+    color: #4b5563;
+}
+
+.border-gray-600 {
+    border-color: #d1d5db;
+}
+
+.focus\:ring-teal-500:focus {
+    --tw-ring-color: #14b8a6;
+}
+
+.bg-gray-800 {
+    background-color: #ffffff;
+}
+
+.hover\:bg-gray-600:hover {
+    background-color: #e5e7eb;
+}
+
+.text-gray-400 {
+    color: #6b7280;
+}
+
+/* Mode sombre */
+html.dark .bg-gradient-to-br.from-gray-900 {
+    background: linear-gradient(to bottom right, #111827, #1f2937);
+}
+
+html.dark .text-gray-100 {
+    color: #f3f4f6;
+}
+
+html.dark .text-white {
+    color: #ffffff;
+}
+
+html.dark .text-teal-400 {
+    color: #2dd4bf;
+}
+
+html.dark .bg-gradient-to-r.from-indigo-700 {
+    background: linear-gradient(to right, #3730a3, #4f46e5);
+}
+
+html.dark .text-indigo-200 {
+    color: #e0e7ff;
+}
+
+html.dark .text-indigo-300 {
+    color: #c7d2fe;
+}
+
+html.dark .bg-gradient-to-r.from-purple-700 {
+    background: linear-gradient(to right, #6b21a8, #9333ea);
+}
+
+html.dark .text-purple-200 {
+    color: #f3e8ff;
+}
+
+html.dark .text-purple-300 {
+    color: #e9d5ff;
+}
+
+html.dark .bg-gray-700 {
+    background-color: #374151;
+}
+
+html.dark .text-gray-200 {
+    color: #9ca3af;
+}
+
+html.dark .border-gray-600 {
+    border-color: #4b5563;
+}
+
+html.dark .focus\:ring-teal-500:focus {
+    --tw-ring-color: #2dd4bf;
+}
+
+html.dark .bg-gray-800 {
+    background-color: #1f2937;
+}
+
+html.dark .hover\:bg-gray-600:hover {
+    background-color: #4b5563;
+}
+
+html.dark .text-gray-400 {
+    color: #9ca3af;
+}
 
 /* Animations */
 @keyframes slideIn {
@@ -143,6 +281,20 @@ onMounted(() => {
     }
 }
 
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
 .animate-slide-in {
     animation: slideIn 0.5s ease-out forwards;
 }
@@ -153,6 +305,10 @@ onMounted(() => {
 
 .animate-row-in {
     animation: rowIn 0.5s ease-out forwards;
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
 }
 
 /* Styles généraux */
@@ -167,17 +323,35 @@ onMounted(() => {
 }
 
 ::-webkit-scrollbar-track {
-    background: #2d3748;
+    background: #e5e7eb;
+    /* Mode clair */
     border-radius: 4px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+    background: #2d3748;
+    /* Mode sombre */
 }
 
 ::-webkit-scrollbar-thumb {
     background: #4f46e5;
+    /* Mode clair */
     border-radius: 4px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+    background: #818cf8;
+    /* Mode sombre */
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: #6366f1;
+    /* Mode clair */
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #a5b4fc;
+    /* Mode sombre */
 }
 
 /* Réactivité */

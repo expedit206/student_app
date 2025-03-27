@@ -43,14 +43,13 @@ function truncateDescription(description: string | undefined, maxLength: number)
 </script>
 
 <template>
-
     <Head :title="`Disciplines - ${props.formation.titre}`" />
     <MonLayout>
         <div class="max-w-6xl mx-auto p-4 sm:p-6">
             <!-- Titre -->
             <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-100 mb-6 flex items-center animate-slide-in">
                 <i class="fas fa-graduation-cap mr-3 text-indigo-400 animate-pulse"></i>
-                Mes Disciplines - {{ props.formation.disciplines[0].titre }}
+                Mes Disciplines - {{ props.formation.titre }}
             </h1>
 
             <!-- Synthèse -->
@@ -59,7 +58,7 @@ function truncateDescription(description: string | undefined, maxLength: number)
                     class="bg-gradient-to-r from-indigo-900 to-indigo-800 p-4 rounded-xl shadow-lg flex items-center transform hover:scale-105 transition-transform duration-300">
                     <i class="fas fa-book text-indigo-400 mr-3 text-2xl"></i>
                     <div>
-                        <p class="text-sm text-gray-300">Disciplines</p>
+                        <p class="text-sm text-gray-10">Disciplines</p>
                         <p class="text-xl font-bold text-white">{{ totalDisciplines }}</p>
                     </div>
                 </div>
@@ -67,7 +66,7 @@ function truncateDescription(description: string | undefined, maxLength: number)
                     class="bg-gradient-to-r from-green-900 to-green-800 p-4 rounded-xl shadow-lg flex items-center transform hover:scale-105 transition-transform duration-300">
                     <i class="fas fa-clock text-green-400 mr-3 text-2xl"></i>
                     <div>
-                        <p class="text-sm text-gray-300">Heures Totales</p>
+                        <p class="text-sm  text-gray-10">Heures Totales</p>
                         <p class="text-xl font-bold text-white">{{ totalHeures }}h</p>
                     </div>
                 </div>
@@ -75,7 +74,7 @@ function truncateDescription(description: string | undefined, maxLength: number)
                     class="bg-gradient-to-r from-blue-900 to-blue-800 p-4 rounded-xl shadow-lg flex items-center transform hover:scale-105 transition-transform duration-300">
                     <i class="fas fa-weight text-blue-400 mr-3 text-2xl"></i>
                     <div>
-                        <p class="text-sm text-gray-300">Moy. Coefficient</p>
+                        <p class="text-sm text-gray-0">Moy. Coefficient</p>
                         <p class="text-xl font-bold text-white">{{ moyenneCoefficient }}</p>
                     </div>
                 </div>
@@ -163,13 +162,174 @@ function truncateDescription(description: string | undefined, maxLength: number)
 </template>
 
 <style scoped>
+/* Styles par défaut (mode clair) */
+.text-gray-100 {
+    color: #1f2937;
+}
+
+.text-indigo-400 {
+    color: #6366f1;
+}
+
+.bg-gradient-to-r.from-indigo-900 {
+    background: linear-gradient(to right, #4f46e5, #4338ca);
+}
+
+.text-gray-300 {
+    color: #6b7280;
+}
+
+.text-white {
+    color: #111827;
+}
+
+.bg-gradient-to-r.from-green-900 {
+    background: linear-gradient(to right, #15803d, #16a34a);
+}
+
+.text-green-400 {
+    color: #22c55e;
+}
+
+.bg-gradient-to-r.from-blue-900 {
+    background: linear-gradient(to right, #1e3a8a, #1d4ed8);
+}
+
+.text-blue-400 {
+    color: #3b82f6;
+}
+
+.bg-gray-700 {
+    background-color: #f9fafb;
+}
+
+.text-gray-200 {
+    color: #4b5563;
+}
+
+.border-gray-600 {
+    border-color: #d1d5db;
+}
+
+.focus\:ring-indigo-500:focus {
+    --tw-ring-color: #6366f1;
+}
+
+.bg-gradient-to-r.from-gray-900 {
+    background: linear-gradient(to right, #e5e7eb, #d1d5db);
+}
+
+.border-gray-700 {
+    border-color: #e5e7eb;
+}
+
+.hover\:bg-gray-700:hover {
+    background-color: #e5e7eb;
+}
+
+.text-gray-400 {
+    color: #6b7280;
+}
+
+.bg-gray-800 {
+    background-color: #ffffff;
+}
+
+.bg-gradient-to-r.from-yellow-900 {
+    background: linear-gradient(to right, #d97706, #ea580c);
+}
+
+.text-yellow-400 {
+    color: #fbbf24;
+}
+
+/* Mode sombre */
+html.dark .text-gray-100 {
+    color: #f3f4f6;
+}
+
+html.dark .text-indigo-400 {
+    color: #818cf8;
+}
+
+html.dark .bg-gradient-to-r.from-indigo-900 {
+    background: linear-gradient(to right, #4338ca, #4f46e5);
+}
+
+html.dark .text-gray-300 {
+    color: #d1d5db;
+}
+
+html.dark .text-white {
+    color: #ffffff;
+}
+
+html.dark .bg-gradient-to-r.from-green-900 {
+    background: linear-gradient(to right, #166534, #22c55e);
+}
+
+html.dark .text-green-400 {
+    color: #4ade80;
+}
+
+html.dark .bg-gradient-to-r.from-blue-900 {
+    background: linear-gradient(to right, #1e40af, #3b82f6);
+}
+
+html.dark .text-blue-400 {
+    color: #60a5fa;
+}
+
+html.dark .bg-gray-700 {
+    background-color: #374151;
+}
+
+html.dark .text-gray-200 {
+    color: #9ca3af;
+}
+
+html.dark .border-gray-600 {
+    border-color: #4b5563;
+}
+
+html.dark .focus\:ring-indigo-500:focus {
+    --tw-ring-color: #818cf8;
+}
+
+html.dark .bg-gradient-to-r.from-gray-900 {
+    background: linear-gradient(to right, #1f2937, #374151);
+}
+
+html.dark .border-gray-700 {
+    border-color: #4b5563;
+}
+
+html.dark .hover\:bg-gray-700:hover {
+    background-color: #4b5563;
+}
+
+html.dark .text-gray-400 {
+    color: #9ca3af;
+}
+
+html.dark .bg-gray-800 {
+    background-color: #1f2937;
+}
+
+html.dark .bg-gradient-to-r.from-yellow-900 {
+    background: linear-gradient(to right, #b45309, #f59e0b);
+}
+
+html.dark .text-yellow-400 {
+    color: #fcd34d;
+}
+
 /* Animations */
 @keyframes slideIn {
     from {
         opacity: 0;
         transform: translateY(-20px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -180,7 +340,6 @@ function truncateDescription(description: string | undefined, maxLength: number)
     from {
         opacity: 0;
     }
-
     to {
         opacity: 1;
     }
@@ -191,7 +350,6 @@ function truncateDescription(description: string | undefined, maxLength: number)
         opacity: 0;
         transform: translateX(-20px);
     }
-
     to {
         opacity: 1;
         transform: translateX(0);
@@ -208,6 +366,22 @@ function truncateDescription(description: string | undefined, maxLength: number)
 
 .animate-row-in {
     animation: rowIn 0.5s ease-out forwards;
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 /* Styles généraux */
@@ -230,17 +404,29 @@ td {
 }
 
 .overflow-x-auto::-webkit-scrollbar-track {
-    background: #2d3748;
+    background: #e5e7eb; /* Mode clair */
     border-radius: 4px;
+}
+
+html.dark .overflow-x-auto::-webkit-scrollbar-track {
+    background: #2d3748; /* Mode sombre */
 }
 
 .overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #6366f1;
+    background: #6366f1; /* Mode clair */
     border-radius: 4px;
 }
 
+html.dark .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #818cf8; /* Mode sombre */
+}
+
 .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-    background: #818cf8;
+    background: #818cf8; /* Mode clair */
+}
+
+html.dark .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: #a5b4fc; /* Mode sombre */
 }
 
 /* Réactivité */
@@ -248,7 +434,6 @@ td {
     .max-w-6xl {
         max-width: 100%;
     }
-
     th,
     td {
         font-size: 0.875rem;
@@ -261,15 +446,12 @@ td {
     .p-6 {
         padding: 1rem;
     }
-
     h1 {
         font-size: 1.75rem;
     }
-
     .text-xl {
         font-size: 1.125rem;
     }
-
     .text-sm {
         font-size: 0.875rem;
     }

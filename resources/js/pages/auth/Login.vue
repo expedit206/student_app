@@ -28,7 +28,7 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthBase title="Accédez à votre avenir"
+    <AuthBase title="Connectez vouz a votre compte !!"
         description="Connectez-vous pour booster vos compétences avec le Centre de Formation Professionnel La Canadienne">
 
         <Head title="Connexion" />

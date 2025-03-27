@@ -32,7 +32,8 @@ onMounted(() => {
     console.log('Props reçus:', props.dashboardData);
     console.log('Formations:', props.dashboardData.formations);
 });
-// Données du graphique (identique à la logique du formateur)
+
+// Données du graphique
 const chartData = ref({
     labels: props.dashboardData.formations.map(f => f.name),
     datasets: [
@@ -175,16 +176,165 @@ const chartOptions = {
                         </li>
                     </ul>
                 </div>
-                
             </div>
         </div>
     </MonLayout>
 </template>
 
 <style scoped>
-/* Ajoutez des styles personnalisés ici */
+/* Styles par défaut (mode clair) */
+.bg-gradient-to-br.from-gray-900 {
+    background: linear-gradient(to bottom right, #f3f4f6, #e5e7eb);
+}
+
+.text-gray-100 {
+    color: #1f2937;
+}
+
+.text-white {
+    color: #111827;
+}
+
+.text-teal-400 {
+    color: #14b8a6;
+}
+
+.bg-gradient-to-r.from-teal-600 {
+    background: linear-gradient(to right, #0d9488, #14b8a6);
+}
+
+.text-teal-200 {
+    color: #5eead4;
+}
+
+.text-teal-300 {
+    color: #2dd4bf;
+}
+
+.bg-gradient-to-r.from-indigo-600 {
+    background: linear-gradient(to right, #4f46e5, #6366f1);
+}
+
+.text-indigo-200 {
+    color: #c7d2fe;
+}
+
+.text-indigo-300 {
+    color: #a5b4fc;
+}
+
+.bg-gradient-to-r.from-purple-600 {
+    background: linear-gradient(to right, #9333ea, #a855f7);
+}
+
+.text-purple-200 {
+    color: #e9d5ff;
+}
+
+.text-purple-300 {
+    color: #d8b4fe;
+}
+
+.bg-gray-800 {
+    background-color: #ffffff;
+}
+
+.bg-gray-700 {
+    background-color: #f9fafb;
+}
+
+.hover\:bg-gray-600:hover {
+    background-color: #e5e7eb;
+}
+
+.text-gray-400 {
+    color: #6b7280;
+}
+
+/* Mode sombre */
+html.dark .bg-gradient-to-br.from-gray-900 {
+    background: linear-gradient(to bottom right, #111827, #1f2937);
+}
+
+html.dark .text-gray-100 {
+    color: #f3f4f6;
+}
+
+html.dark .text-white {
+    color: #ffffff;
+}
+
+html.dark .text-teal-400 {
+    color: #2dd4bf;
+}
+
+html.dark .bg-gradient-to-r.from-teal-600 {
+    background: linear-gradient(to right, #0f766e, #2dd4bf);
+}
+
+html.dark .text-teal-200 {
+    color: #99f6e4;
+}
+
+html.dark .text-teal-300 {
+    color: #5eead4;
+}
+
+html.dark .bg-gradient-to-r.from-indigo-600 {
+    background: linear-gradient(to right, #4338ca, #818cf8);
+}
+
+html.dark .text-indigo-200 {
+    color: #e0e7ff;
+}
+
+html.dark .text-indigo-300 {
+    color: #c7d2fe;
+}
+
+html.dark .bg-gradient-to-r.from-purple-600 {
+    background: linear-gradient(to right, #7e22ce, #c084fc);
+}
+
+html.dark .text-purple-200 {
+    color: #f3e8ff;
+}
+
+html.dark .text-purple-300 {
+    color: #e9d5ff;
+}
+
+html.dark .bg-gray-800 {
+    background-color: #1f2937;
+}
+
+html.dark .bg-gray-700 {
+    background-color: #374151;
+}
+
+html.dark .hover\:bg-gray-600:hover {
+    background-color: #4b5563;
+}
+
+html.dark .text-gray-400 {
+    color: #9ca3af;
+}
+
+/* Animations personnalisées */
 .animate-fade-in {
     animation: fadeIn 0.5s ease;
+}
+
+.animate-spin-slow {
+    animation: spinSlow 4s linear infinite;
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+.animate-bounce {
+    animation: bounce 1s infinite;
 }
 
 @keyframes fadeIn {
@@ -194,6 +344,66 @@ const chartOptions = {
 
     to {
         opacity: 1;
+    }
+}
+
+@keyframes spinSlow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-10px);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Réactivité */
+@media (min-width: 640px) {
+    .sm\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .lg\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .lg\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 </style>

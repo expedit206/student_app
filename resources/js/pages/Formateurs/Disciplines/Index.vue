@@ -1,5 +1,5 @@
 <template>
-    <FormateurLayout>
+    <MonLayout>
         <div class="p-4 sm:p-6 bg-gray-900 text-gray-100 min-h-screen overflow-hidden">
             <!-- Header -->
             <h1 class="text-2xl sm:text-3xl font-extrabold mb-8 flex items-center animate-slide-in">
@@ -103,13 +103,13 @@
                 </div>
             </div>
         </div>
-    </FormateurLayout>
+    </MonLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import FormateurLayout from '@/components/MonLayout.vue';
-
+import MonLayout from '@/components/MonLayout.vue';
 const props = defineProps<{
     disciplines: Array<{
         id: number;

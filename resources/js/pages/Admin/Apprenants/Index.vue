@@ -97,7 +97,7 @@ const iconColors = {
             <div class="flex flex-col sm:flex-row items-center justify-between mb-3 animate-fade-in">
                 <h1 class="text-2xl sm:text-3xl font-extrabold flex items-center">
                     <i :class="['fas fa-user-graduate mr-3', iconColors.base, 'transition-colors duration-300']"></i>
-                    Liste des Étudiants
+                    Liste des Apprenants
                 </h1>
                 <TextLink :href="route('apprenants.create')"
                     class="mt-2 sm:mt-0 bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition-all duration-300 flex items-center">

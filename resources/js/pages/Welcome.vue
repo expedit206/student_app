@@ -180,7 +180,7 @@ const tabs = [
         <!-- Pied de page -->
         <footer class="py-6 px-4 bg-gray-50 dark:bg-gray-800 text-center text-gray-600 dark:text-gray-400">
             <p class="text-sm sm:text-base">© {{ new Date().getFullYear() }} Centre de Formation Professionnel La
-                Canadienne. Tous droits réservés.</p>
+                Canadienne. Tous droits réservés. By mciagnessi@gmail.com</p>
         </footer>
     </div>
 </template>

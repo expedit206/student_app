@@ -129,8 +129,9 @@ onUnmounted(() => {
 
 <template>
 
-    
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex overflow-hidden">
+
+    <div
+        class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex overflow-hidden relative">
         <!-- Sidebar -->
         <div :class="['inline-flex gap-1 rounded-lg  p-1']"
             class="fixed top-0 right-0 mt-1 dark:bg-slate-600 bg-slate-300 mr-4 z-10  md:flex">
@@ -323,9 +324,9 @@ onUnmounted(() => {
                                         class="bg-red-500 text-white text-xs rounded-full px-2 py-0.5 animate-pulse">
                                         {{ localNotifications.length }}
                                     </span>
+                                    <i v-if="!isMobile ? isSidebarExpanded : isSidebarVisible"
+                                        class="fas fa-chevron-down"></i>
                                 </span>
-                                <i v-if="!isMobile ? isSidebarExpanded : isSidebarVisible"
-                                    class="fas fa-chevron-down"></i>
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent v-if="!isMobile ? isSidebarExpanded : isSidebarVisible"
@@ -346,7 +347,7 @@ onUnmounted(() => {
 
         <!-- Main Content -->
         <main
-            :class="['flex-1 p-4 sm:p-6 bg-gray-50 dark:bg-gray-800 overflow-y-auto transition-all duration-300 relative', isMobile ? 'ml-0' : (isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-16')]">
+            :class="['flex-1 p-4 sm:p-6 bg-gray-50 dark:bg-gray-800 mb-16  overflow-y-auto transition-all duration-300 relative', isMobile ? 'ml-0' : (isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-16')]">
             <button v-if="isMobile && !isSidebarVisible" @click="toggleSidebar"
                 class="fixed top-4 left-4 z-30 bg-indigo-600 text-white p-2 rounded-full shadow-lg hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 transition-all">
                 <i class="fas fa-bars text-lg"></i>
@@ -355,6 +356,12 @@ onUnmounted(() => {
             <div class="scroll-hint bg-indigo-500 dark:bg-indigo-400 text-white px-3 py-1 rounded-full text-xs">Défiler
             </div>
         </main>
+        <footer class="py-6 px-4 bg-gray-50 border-t-2 border-black text-center text-gray-600 absolute bottom-0 right-0"
+            :class="isSidebarVisible ? 'w-[80%]' : 'w-full'">
+            <p class="text-sm sm:text-base">© {{ new Date().getFullYear() }} Centre de Formation Professionnel La
+                Canadienne. Tous droits réservés. By <a href="mailto:mciagnessi@gmail.com">mciagnessi@gmail.com</a></p>
+        </footer>
+
     </div>
 </template>
 
