@@ -59,23 +59,14 @@ const saveNote = (apprenantId: number, disciplineId: number) => {
         editingNote.value = null;
     }
 };
-
-const iconColors = {
-    base: 'text-yellow-400',
-    hover: 'text-yellow-300',
-    save: 'text-green-400',
-    saveHover: 'text-green-300',
-    cancel: 'text-red-400',
-    cancelHover: 'text-red-300',
-};
 </script>
 
 <template>
     <FormateurLayout>
-        <div class="p-4 sm:p-6 bg-gray-900 text-gray-100 min-h-screen overflow-hidden">
+        <div class="p-4 sm:p-6 bg-gray-100 text-gray-900 min-h-screen overflow-hidden">
             <!-- Header -->
             <h1 class="text-2xl sm:text-3xl font-extrabold mb-8 flex items-center animate-slide-in">
-                <i :class="['fas fa-star mr-3 text-3xl sm:text-4xl', iconColors.base, 'animate-spin-slow']"></i>
+                <i class="fas fa-star mr-3 text-3xl sm:text-4xl text-yellow-600 animate-spin-slow"></i>
                 Gestion des Notes
             </h1>
 
@@ -83,27 +74,27 @@ const iconColors = {
             <div class="mb-8 animate-fade-up">
                 <div class="relative max-w-md">
                     <i
-                        :class="['fas fa-graduation-cap absolute left-4 top-1/2 transform -translate-y-1/2', iconColors.base, 'animate-pulse']"></i>
+                        class="fas fa-graduation-cap absolute left-4 top-1/2 transform -translate-y-1/2 text-yellow-600 animate-pulse"></i>
                     <select v-model="selectedFormation" @change="changeFormation(selectedFormation)"
-                        class="w-full pl-12 pr-10 py-2 sm:py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none shadow-md hover:shadow-xl transition-all duration-300 hover:bg-gray-700 text-sm sm:text-base">
+                        class="w-full pl-12 pr-10 py-2 sm:py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent appearance-none shadow-md hover:shadow-xl transition-all duration-300 hover:bg-gray-50 text-sm sm:text-base">
                         <option :value="null">Sélectionnez une formation</option>
                         <option v-for="formation in props.formations" :key="formation.id" :value="formation.id">
                             {{ formation.titre }}
                         </option>
                     </select>
                     <i
-                        :class="['fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2', iconColors.base, 'animate-bounce pointer-events-none']"></i>
+                        class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-yellow-600 animate-bounce pointer-events-none"></i>
                 </div>
             </div>
 
             <!-- Desktop : Tableau -->
             <div v-if="selectedFormation"
-                class="hidden sm:block bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] animate-fade-in">
+                class="hidden sm:block bg-white rounded-xl shadow-2xl overflow-hidden transform transition-all duration-500 hover:shadow-[0_0_15px_rgba(234,179,8,0.5)] animate-fade-in">
                 <div class="max-h-[500px] overflow-y-auto">
                     <table class="min-w-full">
                         <thead>
-                            <tr class="bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200 animate-slide-in">
-                                <th class="py-4 px-6 text-left font-semibold sticky left-0 bg-gray-800 z-10">Apprenant
+                            <tr class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-700 animate-slide-in">
+                                <th class="py-4 px-6 text-left font-semibold sticky left-0 bg-gray-200 z-10">Apprenant
                                 </th>
                                 <th v-for="discipline in currentFormation.disciplines" :key="discipline.id"
                                     class="py-4 px-6 text-left font-semibold">
@@ -113,30 +104,30 @@ const iconColors = {
                         </thead>
                         <tbody>
                             <tr v-for="(apprenant, index) in currentFormation.apprenants" :key="apprenant.id"
-                                class="border-b border-gray-700 hover:bg-gray-700 transition-all duration-300 animate-row-in"
+                                class="border-b border-gray-200 hover:bg-gray-50 transition-all duration-300 animate-row-in"
                                 :style="{ animationDelay: `${0.1 + index * 0.1}s` }">
-                                <td class="py-4 px-6 text-gray-100 sticky left-0 bg-gray-800 z-10">{{ apprenant.prenom
-                                    }} {{ apprenant.nom }}</td>
+                                <td class="py-4 px-6 text-gray-900 sticky left-0 bg-white z-10 font-medium">
+                                    {{ apprenant.prenom }} {{ apprenant.nom }}</td>
                                 <td v-for="discipline in currentFormation.disciplines" :key="discipline.id"
-                                    class="py-4 px-6 text-gray-100">
+                                    class="py-4 px-6 text-gray-900">
                                     <div v-if="editingNote && editingNote.apprenantId === apprenant.id && editingNote.disciplineId === discipline.id"
                                         class="flex items-center gap-2">
                                         <input v-model="editingNote.value" type="number" min="0" max="20" step="0.01"
-                                            class="w-20 p-2 bg-gray-700 border border-gray-600 rounded text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            class="w-20 p-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 shadow-sm hover:shadow-md transition-all duration-200"
                                             @blur="saveNote(apprenant.id, discipline.id)"
                                             @keyup.enter="saveNote(apprenant.id, discipline.id)" ref="noteInput"
                                             autofocus />
                                         <button @click="saveNote(apprenant.id, discipline.id)"
-                                            :class="['hover:' + iconColors.saveHover, iconColors.save]">
+                                            class="text-green-600 hover:text-green-700 text-lg hover:scale-110 transition-transform duration-200">
                                             <i class="fas fa-check"></i>
                                         </button>
                                         <button @click="editingNote = null"
-                                            :class="['hover:' + iconColors.cancelHover, iconColors.cancel]">
+                                            class="text-red-600 hover:text-red-700 text-lg hover:scale-110 transition-transform duration-200">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
                                     <span v-else
-                                        class="cursor-pointer hover:text-yellow-300 transition-colors duration-200"
+                                        class="cursor-pointer hover:text-yellow-700 transition-colors duration-200 font-medium"
                                         @click="startEditingNote(apprenant.id, discipline.id, apprenant.notes[discipline.id] || null)">
                                         {{ apprenant.notes[discipline.id] !== undefined &&
                                             apprenant.notes[discipline.id] !== null
@@ -146,7 +137,7 @@ const iconColors = {
                             </tr>
                             <tr v-if="currentFormation.apprenants.length === 0">
                                 <td :colspan="currentFormation.disciplines.length + 1"
-                                    class="p-6 text-center text-gray-400 animate-pulse">
+                                    class="p-6 text-center text-gray-500 animate-pulse">
                                     <i class="fas fa-exclamation-circle mr-2 text-xl animate-bounce"></i> Aucun
                                     apprenant trouvé pour cette formation
                                 </td>
@@ -158,38 +149,37 @@ const iconColors = {
 
             <!-- Mobile : Cartes -->
             <div v-if="selectedFormation"
-                class="sm:hidden grid grid-cols-1 gap-4 bg-gray-800 rounded-xl shadow-2xl p-4 max-h-[500px] overflow-y-auto animate-fade-in">
+                class="sm:hidden grid grid-cols-1 gap-4 bg-white rounded-xl shadow-2xl p-4 max-h-[500px] overflow-y-auto animate-fade-in">
                 <div v-for="(apprenant, index) in currentFormation.apprenants" :key="apprenant.id"
-                    class="bg-gray-700 rounded-lg shadow-md border border-gray-600 p-4 hover:shadow-xl transition-all duration-300 animate-card-in"
+                    class="bg-gray-50 rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-xl transition-all duration-300 animate-card-in hover:bg-gray-100"
                     :style="{ animationDelay: `${0.1 + index * 0.1}s` }">
                     <div class="flex flex-col space-y-3">
-                        <h2 class="text-lg font-semibold text-gray-100 truncate"
+                        <h2 class="text-lg font-semibold text-gray-900 truncate"
                             :title="apprenant.prenom + ' ' + apprenant.nom">
-                            <i :class="['fas fa-user mr-2', iconColors.base]"></i>{{ apprenant.prenom }} {{
-                            apprenant.nom }}
+                            <i class="fas fa-user mr-2 text-yellow-600"></i>{{ apprenant.prenom }} {{ apprenant.nom }}
                         </h2>
                         <div class="grid grid-cols-1 gap-2">
                             <div v-for="discipline in currentFormation.disciplines" :key="discipline.id"
                                 class="flex flex-col">
-                                <span class="text-sm text-gray-400">{{ discipline.nom }}</span>
+                                <span class="text-sm text-gray-600 font-medium">{{ discipline.nom }}</span>
                                 <div v-if="editingNote && editingNote.apprenantId === apprenant.id && editingNote.disciplineId === discipline.id"
                                     class="flex items-center gap-2 mt-1">
                                     <input v-model="editingNote.value" type="number" min="0" max="20" step="0.01"
-                                        class="w-20 p-2 bg-gray-600 border border-gray-500 rounded text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        class="w-20 p-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 shadow-sm hover:shadow-md transition-all duration-200"
                                         @blur="saveNote(apprenant.id, discipline.id)"
                                         @keyup.enter="saveNote(apprenant.id, discipline.id)" ref="noteInput"
                                         autofocus />
                                     <button @click="saveNote(apprenant.id, discipline.id)"
-                                        :class="['hover:' + iconColors.saveHover, iconColors.save]">
+                                        class="text-green-600 hover:text-green-700 text-lg hover:scale-110 transition-transform duration-200">
                                         <i class="fas fa-check"></i>
                                     </button>
                                     <button @click="editingNote = null"
-                                        :class="['hover:' + iconColors.cancelHover, iconColors.cancel]">
+                                        class="text-red-600 hover:text-red-700 text-lg hover:scale-110 transition-transform duration-200">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
                                 <span v-else
-                                    class="text-sm text-gray-100 hover:text-yellow-300 transition-colors duration-200 cursor-pointer mt-1"
+                                    class="text-sm text-gray-900 hover:text-yellow-700 transition-colors duration-200 cursor-pointer mt-1 font-medium"
                                     @click="startEditingNote(apprenant.id, discipline.id, apprenant.notes[discipline.id] || null)">
                                     {{ apprenant.notes[discipline.id] !== undefined && apprenant.notes[discipline.id]
                                         !== null
@@ -200,14 +190,15 @@ const iconColors = {
                     </div>
                 </div>
                 <div v-if="currentFormation.apprenants.length === 0"
-                    class="col-span-full p-4 text-center text-gray-400 animate-pulse bg-gray-700 rounded-lg shadow-md border border-gray-600">
+                    class="col-span-full p-4 text-center text-gray-500 animate-pulse bg-gray-50 rounded-lg shadow-md border border-gray-200">
                     <i class="fas fa-exclamation-circle mr-2 text-xl animate-bounce"></i> Aucun apprenant trouvé pour
                     cette formation
                 </div>
             </div>
 
             <!-- Message si aucune formation sélectionnée -->
-            <div v-if="!selectedFormation" class="text-center text-gray-400 animate-pulse p-6">
+            <div v-if="!selectedFormation"
+                class="text-center text-gray-500 animate-pulse p-6 bg-white rounded-xl shadow-md">
                 <i class="fas fa-info-circle mr-2 text-xl animate-bounce"></i> Veuillez sélectionner une formation pour
                 voir les notes
             </div>
@@ -218,6 +209,168 @@ const iconColors = {
 <style scoped>
 select {
     background-image: none;
+}
+
+/* Styles par défaut (mode clair) */
+.bg-gray-100 {
+    background-color: #f3f4f6;
+}
+
+.text-gray-900 {
+    color: #1f2937;
+}
+
+.bg-white {
+    background-color: #ffffff;
+}
+
+.border-gray-300 {
+    border-color: #d1d5db;
+}
+
+.text-yellow-600 {
+    color: #d97706;
+}
+
+.hover\:text-yellow-700:hover {
+    color: #b45309;
+}
+
+.bg-gradient-to-r.from-gray-200 {
+    background: linear-gradient(to right, #e5e7eb, #d1d5db);
+}
+
+.text-gray-700 {
+    color: #4b5563;
+}
+
+.bg-gray-200 {
+    background-color: #e5e7eb;
+}
+
+.border-gray-200 {
+    border-color: #e5e7eb;
+}
+
+.hover\:bg-gray-50:hover {
+    background-color: #f9fafb;
+}
+
+.bg-gray-50 {
+    background-color: #f9fafb;
+}
+
+.text-gray-600 {
+    color: #4b5563;
+}
+
+.text-gray-500 {
+    color: #6b7280;
+}
+
+.bg-gray-100 {
+    background-color: #f3f4f6;
+}
+
+.focus\:ring-yellow-500:focus {
+    --tw-ring-color: #f59e0b;
+}
+
+.text-green-600 {
+    color: #059669;
+}
+
+.hover\:text-green-700:hover {
+    color: #047857;
+}
+
+.text-red-600 {
+    color: #dc2626;
+}
+
+.hover\:text-red-700:hover {
+    color: #b91c1c;
+}
+
+/* Mode sombre */
+html.dark .bg-gray-100 {
+    background-color: #111827;
+}
+
+html.dark .text-gray-900 {
+    color: #f3f4f6;
+}
+
+html.dark .bg-white {
+    background-color: #1f2937;
+}
+
+html.dark .border-gray-300 {
+    border-color: #4b5563;
+}
+
+html.dark .text-yellow-600 {
+    color: #fbbf24;
+}
+
+html.dark .hover\:text-yellow-700:hover {
+    color: #f59e0b;
+}
+
+html.dark .bg-gradient-to-r.from-gray-200 {
+    background: linear-gradient(to right, #374151, #1f2937);
+}
+
+html.dark .text-gray-700 {
+    color: #d1d5db;
+}
+
+html.dark .bg-gray-200 {
+    background-color: #1f2937;
+}
+
+html.dark .border-gray-200 {
+    border-color: #374151;
+}
+
+html.dark .hover\:bg-gray-50:hover {
+    background-color: #374151;
+}
+
+html.dark .bg-gray-50 {
+    background-color: #374151;
+}
+
+html.dark .text-gray-600 {
+    color: #9ca3af;
+}
+
+html.dark .text-gray-500 {
+    color: #6b7280;
+}
+
+html.dark .bg-gray-100 {
+    background-color: #1f2937;
+}
+
+html.dark .focus\:ring-yellow-500:focus {
+    --tw-ring-color: #eab308;
+}
+
+html.dark .text-green-600 {
+    color: #10b981;
+}
+
+html.dark .hover\:text-green-700:hover {
+    color: #059669;
+}
+
+html.dark .text-red-600 {
+    color: #ef4444;
+}
+
+html.dark .hover\:text-red-700:hover {
+    color: #dc2626;
 }
 
 /* Animations personnalisées */
@@ -310,16 +463,28 @@ select {
 }
 
 .max-h-[500px]::-webkit-scrollbar-track {
-    background: #374151;
+    background: #e5e7eb;
     border-radius: 4px;
+}
+
+html.dark .max-h-[500px]::-webkit-scrollbar-track {
+    background: #1f2937;
 }
 
 .max-h-[500px]::-webkit-scrollbar-thumb {
-    background: #6b7280;
+    background: #9ca3af;
     border-radius: 4px;
 }
 
+html.dark .max-h-[500px]::-webkit-scrollbar-thumb {
+    background: #6b7280;
+}
+
 .max-h-[500px]::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+html.dark .max-h-[500px]::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
 }
 

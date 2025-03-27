@@ -84,7 +84,7 @@
             <!-- Mobile : Cartes -->
             <div class="sm:hidden grid grid-cols-1 gap-4 bg-gray-800 rounded-xl shadow-2xl p-4 animate-fade-in">
                 <div v-for="(discipline, index) in filteredDisciplines" :key="discipline.id"
-                    class="bg-gray-700 rounded-lg shadow-md border border-gray-600 p-4 hover:shadow-xl transition-all duration-300 animate-card-in"
+                    class="dark:bg-gray-700 rounded-lg shadow-md border border-gray-600 p-4 hover:shadow-xl transition-all duration-300 animate-card-in"
                     :style="{ animationDelay: `${0.7 + index * 0.1}s` }">
                     <div class="flex flex-col space-y-2">
                         <h2 class="text-lg font-semibold text-gray-100 truncate" :title="discipline.nom">
@@ -144,12 +144,126 @@ const resetSearch = () => {
 };
 
 const iconColors = {
-    base: 'text-blue-400',
-    hover: 'text-blue-300',
+    base: 'text-blue-600',
+    hover: 'text-blue-700',
 };
 </script>
 
 <style scoped>
+/* Styles par défaut (mode clair) */
+.bg-gray-900 {
+    background-color: #f3f4f6;
+}
+
+.text-gray-100 {
+    color: #1f2937;
+}
+
+.bg-gray-800 {
+    background-color: #ffffff;
+}
+
+.border-gray-700 {
+    border-color: #d1d5db;
+}
+
+.text-blue-600 {
+    color: #2563eb;
+}
+
+.hover\:text-blue-300:hover {
+    color: #1d4ed8;
+}
+
+.text-white {
+    color: #111827;
+}
+
+.text-gray-400 {
+    color: #6b7280;
+}
+
+.bg-gradient-to-r.from-gray-700 {
+    background: linear-gradient(to right, #e5e7eb, #d1d5db);
+}
+
+.text-gray-200 {
+    color: #4b5563;
+}
+
+.border-gray-600 {
+    border-color: #e5e7eb;
+}
+
+.text-gray-300 {
+    color: #4b5563;
+}
+
+.focus\:ring-blue-500:focus {
+    --tw-ring-color: #3b82f6;
+}
+
+.hover\:bg-gray-700:hover {
+    background-color: #f9fafb;
+}
+
+/* Mode sombre */
+html.dark .bg-gray-900 {
+    background-color: #111827;
+}
+
+html.dark .text-gray-100 {
+    color: #f3f4f6;
+}
+
+html.dark .bg-gray-800 {
+    background-color: #1f2937;
+}
+
+html.dark .border-gray-700 {
+    border-color: #4b5563;
+}
+
+html.dark .text-blue-600 {
+    color: #60a5fa;
+}
+
+html.dark .hover\:text-blue-300:hover {
+    color: #93c5fd;
+}
+
+html.dark .text-white {
+    color: #ffffff;
+}
+
+html.dark .text-gray-400 {
+    color: #9ca3af;
+}
+
+html.dark .bg-gradient-to-r.from-gray-700 {
+    background: linear-gradient(to right, #374151, #1f2937);
+}
+
+html.dark .text-gray-200 {
+    color: #d1d5db;
+}
+
+html.dark .border-gray-600 {
+    border-color: #374151;
+}
+
+html.dark .text-gray-300 {
+    color: #9ca3af;
+}
+
+html.dark .focus\:ring-blue-500:focus {
+    --tw-ring-color: #60a5fa;
+}
+
+html.dark .hover\:bg-gray-700:hover {
+    background-color: #374151;
+}
+
 /* Animations personnalisées */
 @keyframes slideIn {
     from {
