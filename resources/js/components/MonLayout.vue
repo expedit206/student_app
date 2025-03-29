@@ -134,7 +134,7 @@ onUnmounted(() => {
         class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex overflow-hidden relative">
         <!-- Sidebar -->
         <div :class="['inline-flex gap-1 rounded-lg  p-1']"
-            class="fixed top-0 right-0 mt-1 dark:bg-slate-600 bg-slate-300 mr-4 z-10  md:flex">
+            class="fixed top-0 right-0 mt-1 dark:bg-slate-600 bg-slate-300 theme mr-4 z-10  md:flex">
             <button v-for="{ value, Icon, label } in tabs" :key="value" @click="updateAppearance(value)" :class="[
                 'flex items-center rounded-md px-2 py-[.2rem] transition-colors',
                 appearance === value
@@ -372,6 +372,20 @@ body {
     font-family: 'Inter', 'Arial', sans-serif;
 }
 
+@media print {
+  
+.theme{
+
+    display: none !important;
+}
+    .sidebar {
+        display: none !important;
+    }
+    footer{
+        
+            display: none !important;
+    }
+}
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }

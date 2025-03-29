@@ -1,0 +1,17 @@
+@startuml
+actor "Formateur" as Enseignant
+
+package "Cas d'utilisation Formateur" {
+    usecase "Saisir Note / Modifier Note" as UC3
+    usecase "Ajouter Commentaire" as UC4
+    usecase "Voir ses formations" as UC5
+    usecase "Voir les apprenants inscrits a sa formation" as UC6
+    usecase "Voir ses disciplines" as UC7
+}
+
+Enseignant --> UC3
+Enseignant --> UC5
+Enseignant --> UC7
+UC3 -down-> UC4
+UC5 -down-> UC6
+@enduml

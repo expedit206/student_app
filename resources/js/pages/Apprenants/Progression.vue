@@ -20,33 +20,37 @@ const currentDate = new Date().toLocaleDateString('fr-FR', {
 <template>
     <MonLayout>
         <div
-            class="max-w-5xl mx-auto p-4 sm:p-6 bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100 min-h-screen">
+            class="max-w-5xl mx-auto p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
             <!-- En-tête -->
-            <header class="mb-6 flex flex-col sm:flex-row items-center justify-between animate-slide-in">
+            <header class="mb-6 flex flex-col sm:flex-row items-center justify-between">
                 <h1
-                    class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white flex flex-wrap items-center justify-center sm:justify-start">
-                    <i class="fas fa-chart-line mr-2 sm:mr-3 text-teal-400 animate-pulse text-xl sm:text-2xl"></i>
+                    class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white flex flex-wrap items-center justify-center sm:justify-start">
+                    <i class="fas fa-chart-line mr-2 sm:mr-3 text-teal-500 dark:text-teal-400"></i>
                     Ma Progression
-                    <span v-if="props.progressionData.formation" class="ml-2 text-teal-300 text-lg sm:text-xl">
+                    <span v-if="props.progressionData.formation"
+                        class="ml-2 text-teal-600 dark:text-teal-300 text-lg sm:text-xl">
                         - {{ props.progressionData.formation.name }}
                     </span>
                 </h1>
-                <div class="text-xs sm:text-sm text-gray-400 mt-2 sm:mt-0">Mis à jour le {{ currentDate }}</div>
+                <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2 sm:mt-0">
+                    Mis à jour le {{ currentDate }}
+                </div>
             </header>
 
             <!-- Progression globale -->
-            <div
-                class="bg-gradient-to-r from-teal-600 to-teal-500 rounded-xl p-4 sm:p-6 shadow-lg mb-6 animate-fade-in">
+            <div class="bg-teal-50 dark:bg-teal-900 rounded-xl p-4 sm:p-6 shadow-lg mb-6">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div class="text-center sm:text-left">
-                        <p class="text-xs sm:text-sm text-teal-200 uppercase tracking-wide">Progression Totale</p>
-                        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mt-1 sm:mt-2">
+                        <p class="text-xs sm:text-sm text-teal-700 dark:text-teal-200 uppercase tracking-wide">
+                            Progression Totale</p>
+                        <h2
+                            class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-teal-900 dark:text-white mt-1 sm:mt-2">
                             {{ props.progressionData.progression }}%
                         </h2>
                     </div>
                     <div class="w-full sm:w-2/3 md:w-1/2">
-                        <div class="bg-gray-700 rounded-full h-4 sm:h-6 overflow-hidden shadow-inner">
-                            <div class="bg-teal-400 h-full rounded-full transition-all duration-1000 ease-out relative"
+                        <div class="bg-gray-300 dark:bg-gray-700 rounded-full h-4 sm:h-6 overflow-hidden shadow-inner">
+                            <div class="bg-teal-500 dark:bg-teal-400 h-full rounded-full transition-all duration-1000 ease-out relative"
                                 :style="{ width: `${props.progressionData.progression}%` }">
                                 <span
                                     class="absolute inset-0 flex items-center justify-center text-white text-xs sm:text-sm font-semibold"
@@ -60,29 +64,29 @@ const currentDate = new Date().toLocaleDateString('fr-FR', {
             </div>
 
             <!-- Liste des disciplines -->
-            <div class="bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 animate-fade-in">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
                 <h3
-                    class="text-lg sm:text-xl font-semibold text-white mb-4 flex items-center justify-center sm:justify-start">
-                    <i class="fas fa-list-check mr-2 text-teal-400 text-lg"></i> Disciplines
+                    class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center justify-center sm:justify-start">
+                    <i class="fas fa-list-check mr-2 text-teal-500 dark:text-teal-400 text-lg"></i> Disciplines
                 </h3>
                 <div v-if="props.progressionData.disciplines.length" class="space-y-3">
                     <div v-for="discipline in props.progressionData.disciplines" :key="discipline.id"
-                        class="p-3 sm:p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-all duration-300 flex flex-col sm:flex-row items-center justify-between gap-2">
+                        class="p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-300 flex flex-col sm:flex-row items-center justify-between gap-2">
                         <div class="flex items-center w-full sm:w-auto">
-                            <i :class="discipline.completed ? 'fas fa-check-circle text-green-400' : 'fas fa-circle text-gray-400'"
+                            <i :class="discipline.completed ? 'fas fa-check-circle text-green-500 dark:text-green-400' : 'fas fa-circle text-gray-400'"
                                 class="mr-2 sm:mr-3 text-lg flex-shrink-0"></i>
-                            <p class="text-white font-medium text-sm sm:text-base break-words w-full">
+                            <p
+                                class="text-gray-900 dark:text-white font-medium text-sm sm:text-base break-words w-full">
                                 {{ discipline.name }}
                             </p>
                         </div>
-                        
                         <span class="text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-semibold flex-shrink-0"
-                            :class="discipline.completed ? 'bg-green-500 text-white' : 'bg-gray-500 text-gray-200'">
+                            :class="discipline.completed ? 'bg-green-500 dark:bg-green-600 text-white' : 'bg-gray-500 dark:bg-gray-600 text-gray-200'">
                             {{ discipline.completed ? 'Terminé' : 'En cours' }}
                         </span>
                     </div>
                 </div>
-                <div v-else class="text-center text-gray-400 py-6">
+                <div v-else class="text-center text-gray-500 dark:text-gray-400 py-6">
                     <i class="fas fa-info-circle mr-2 text-xl"></i> Aucune discipline disponible
                 </div>
             </div>
@@ -95,55 +99,6 @@ const currentDate = new Date().toLocaleDateString('fr-FR', {
 
 body {
     font-family: 'Inter', 'Arial', sans-serif;
-}
-
-/* Animations */
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-.animate-slide-in {
-    animation: slideIn 0.5s ease-out forwards;
-}
-
-.animate-fade-in {
-    animation: fadeIn 0.7s ease-out forwards;
-}
-
-.animate-pulse {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.1);
-    }
-
-    100% {
-        transform: scale(1);
-    }
 }
 
 /* Styles généraux */
@@ -238,7 +193,7 @@ body {
         text-align: center;
     }
 
-    .bg-gradient-to-r {
+    .bg-teal-50 {
         background: #f0f0f0 !important;
         border: 1px solid #ccc;
         border-radius: 5mm;
@@ -252,11 +207,11 @@ body {
         text-align: center;
     }
 
-    .bg-gray-700 {
+    .bg-gray-50 {
         display: none !important;
     }
 
-    .bg-gray-800 {
+    .bg-white {
         background: white !important;
         border: 1px solid #ccc;
         border-radius: 5mm;
@@ -290,19 +245,11 @@ body {
         padding: 2mm 4mm;
     }
 
-    .print-hide,
-    .animate-pulse,
-    .animate-slide-in,
-    .animate-fade-in,
-    .hover\:bg-gray-600,
-    .transition-all {
-        display: none !important;
-    }
-
-    .text-teal-400,
-    .text-green-400,
-    .text-gray-400,
-    .text-white {
+    .text-teal-500,
+    .text-teal-600,
+    .text-green-500,
+    .text-gray-500,
+    .text-gray-900 {
         color: black !important;
     }
 }

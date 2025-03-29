@@ -1,0 +1,16 @@
+@startuml
+actor "Apprenant" as Etudiant
+
+package "Cas d'utilisation Apprenant" {
+    usecase "Consulter Carnet de Notes" as UC1
+    usecase "Voir Commentaires" as UC2
+    usecase "Consulter  progression" as UC3
+    usecase "Voir Formateur" as UC4
+
+}
+
+Etudiant --> UC1
+Etudiant --> UC3
+UC1 -down-> UC2
+Etudiant -down-> UC4
+@enduml

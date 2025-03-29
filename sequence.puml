@@ -1,0 +1,63 @@
+@startuml
+
+' Titre
+title Diagramme de Séquence - Gestion des Notes
+
+' Acteurs et participants
+actor Administrateur
+actor Apprenant
+actor Formateur
+participant "SystèmeGestion" as System
+participant "BaseDeDonnées" as DB
+
+' 1. Gestion des entités (formateur, discipline, apprenant)
+Administrateur -> System: 1. Se connecter
+System -> DB: Vérifier identité
+DB --> System: Identité validée
+Administrateur -> System: 1.1 Ajouter formateur/discipline/apprenant
+System -> DB: Enregistrer données
+DB --> System: Données enregistrées
+
+' 2. Modifier une note
+Administrateur -> System: 2. Modifier note
+System -> DB: Mettre à jour note
+DB --> System: Note modifiée
+System --> Administrateur: Confirmation
+
+' 3. S'inscrire à une formation
+Apprenant -> System: 3. Se connecter
+System -> DB: Vérifier identité
+DB --> System: Identité validée
+Apprenant -> System: 3.1 S'inscrire à formation
+System -> DB: Enregistrer inscription
+DB --> System: Inscription enregistrée
+
+' 4. Consulter ses notes
+Apprenant -> System: 4. Consulter notes
+System -> DB: Rechercher notes
+DB --> System: Retourner notes
+System --> Apprenant: Afficher notes
+
+' 5. Attribuer une note
+Formateur -> System: 5. Attribuer note
+System -> DB: Enregistrer note
+DB --> System: Note enregistrée
+
+' 6. Consulter les notes d’un apprenant
+Formateur -> System: 6. Consulter notes apprenant
+System -> DB: Rechercher notes
+DB --> System: Retourner notes
+System --> Formateur: Afficher notes
+
+' Paramètres pour un rendu compact et clair
+skinparam monochrome true
+skinparam ranksep 15
+skinparam nodesep 35
+skinparam sequenceMessageAlign center
+skinparam sequenceArrowThickness 2
+skinparam sequenceActorBorderThickness 2
+skinparam sequenceBoxBorderThickness 1
+skinparam sequenceLifeLineBorderThickness 1
+' scale 210:297
+
+@enduml
