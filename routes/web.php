@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Formateur;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,11 @@ use App\Http\Controllers\Formateur\FormateurDashboardController;
 
 
 
+Route::get('chat/{friend}', function(User $friend){
+    return view('chat', [
+        'friend'=> $friend
+    ]);
+})->middleware('auth')->name('chat');
 
 Route::get('/', [WelcomeController::class, 'welcome'])->name('welcome')->middleware('guest');
 Route::middleware(['auth', 'userRole:formateur'])->group(function () {
