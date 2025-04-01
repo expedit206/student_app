@@ -6,9 +6,11 @@ use App\Models\User;
 use Inertia\Controller;
 use App\Models\Apprenant;
 use App\Models\Formateur;
+use App\Events\MessageSend;
 use App\Models\ChatMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Broadcast;
 
 class ChatController extends Controller
 {
@@ -159,7 +161,8 @@ class ChatController extends Controller
             'receiver_id' => 'required|exists:users,id',
             'receiver_role' => 'required|in:apprenant,formateur,admin'
         ]);
-
+        // die;
+// die;
         $user = Auth::user();
 
         // return response()->json([
@@ -180,8 +183,9 @@ class ChatController extends Controller
             'message' => $request->message,
             'timestamp' => now()
         ]);
-    
+
         // return response()->json([$request]);
+        Broadcast(new MessageSend($message));
 
         return response()->json([
             'message' => 'Message envoyé avec succès',

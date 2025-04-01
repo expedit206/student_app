@@ -3,6 +3,7 @@
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Formateur;
+use App\Events\MessageSend;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\WelcomeController;
@@ -16,7 +17,6 @@ use App\Http\Controllers\Apprenant\NotificationController;
 use App\Http\Controllers\Admin\ManageAssociationController;
 use App\Http\Controllers\Apprenant\ApprenantDashboardController;
 use App\Http\Controllers\Formateur\FormateurDashboardController;
-
 
 Route::get('chat/messages', [ChatController::class, 'getMessages'])->middleware('auth')->name('getMessages');
 

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue';
 import axios from 'axios';
+// import echo ;
+// import Echo from 'laravel-echo';
+// import { Echo } from "./echo";
 
 // Props passées par Inertia (initialement chargées par le serveur)
 const props = defineProps({
@@ -29,6 +32,12 @@ const selectUser = async (user) => {
                 receiver_role: user.role
             }
         });
+        Echo.private(`chat.${props.currentUser.id}`)
+            .listen('MessageSend', (response) => {
+                currentMessages.value.push(response.message);
+            });
+            
+        
         currentMessages.value = response.data;
     } catch (error) {
         console.error('Erreur lors de la récupération des messages:', error);
@@ -47,14 +56,16 @@ const sendMessage = async () => {
         message: messageInput.value,
         timestamp: new Date()
     });
+    scrollToBottom();
 
     try {
+        // console.log(messageInput.value);
+        // console.log(selectedUser.value.id);
         const response = await axios.post('/chat/send', {
             message: messageInput.value,
             receiver_id: selectedUser.value.id,
             receiver_role: selectedUser.value.role
         });
-        console.log(selectedUser.value.role);
         messageInput.value = ''; // Réinitialiser le champ de saisie
     } catch (error) {
         console.error('Erreur lors de l\'envoi du message:', error);

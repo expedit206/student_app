@@ -7,7 +7,7 @@ import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
 import axios from 'axios';
-
+import "./echo";
 // Configuration d'Axios
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
