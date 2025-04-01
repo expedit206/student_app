@@ -28,13 +28,13 @@ class DatabaseSeeder extends Seeder
             FormateurSeeder::class,
             DisciplineSeeder::class,
             FormationSeeder::class,
-            FormateurFormationSeeder::class,
+            // FormateurFormationSeeder::class,
 
             // UsersTableSeeder::class,
 
             NiveauSeeder::class,
             ApprenantSeeder::class,
-            DisciplineFormateurSeeder::class,
+            // DisciplineFormateurSeeder::class,
 
 
         ]);

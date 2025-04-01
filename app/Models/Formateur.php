@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use App\Models\Apprenant;
 use App\Models\Formation;
 use App\Models\Discipline;
@@ -37,6 +38,9 @@ class Formateur extends Model
             ->withPivot('formation_id')
             ->withTimestamps();
     }
-
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     
 }

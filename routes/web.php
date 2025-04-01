@@ -4,6 +4,7 @@ use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Formateur;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\Formateur\NoteController;
 use App\Http\Controllers\Admin\ApprenantController;
@@ -17,13 +18,11 @@ use App\Http\Controllers\Apprenant\ApprenantDashboardController;
 use App\Http\Controllers\Formateur\FormateurDashboardController;
 
 
+Route::get('chat/messages', [ChatController::class, 'getMessages'])->middleware('auth')->name('getMessages');
 
-Route::get('chat/{friend}', function(User $friend){
-    return view('chat', [
-        'friend'=> $friend
-    ]);
-})->middleware('auth')->name('chat');
+Route::post('/chat/send', [ChatController::class, 'sendMessage'])->middleware('auth');
 
+Route::get('chat/{friend?}',[ChatController::class, 'chat'])->middleware('auth')->name('chat');
 Route::get('/', [WelcomeController::class, 'welcome'])->name('welcome')->middleware('guest');
 Route::middleware(['auth', 'userRole:formateur'])->group(function () {
 

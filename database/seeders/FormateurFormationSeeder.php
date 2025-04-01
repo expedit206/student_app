@@ -10,6 +10,6 @@ class FormateurFormationSeeder extends Seeder
     public function run()
     {
         // Crée 10 associations aléatoires entre formateurs et formations
-        FormateurFormation::factory()->count(50)->create();
+        FormateurFormation::factory()->count(5)->create();
     }
 }

@@ -39,7 +39,7 @@ class ApprenantSeeder extends Seeder
         ]);
 
         // Créez des utilisateurs et des étudiants
-        for ($i = 1; $i <= 50; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             // Créez un utilisateur
             $user = User::create([
                 'email' => 'apprenant' . $i . '@example.com',

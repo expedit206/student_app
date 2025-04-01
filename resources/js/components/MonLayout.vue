@@ -5,7 +5,7 @@ import { usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import TextLink from './TextLink.vue';
 import axios from 'axios';
-
+import ChatComponent from '../components/ChatComponent.vue'
 
 import { useAppearance } from '@/composables/useAppearance';
 import { Monitor, Moon, Sun } from 'lucide-vue-next';
@@ -133,10 +133,14 @@ onUnmounted(() => {
     <div
         class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex overflow-hidden relative">
         <!-- Sidebar -->
+
         <div :class="['inline-flex gap-1 rounded-lg  p-1']"
             class="fixed top-0 right-0 mt-1 dark:bg-slate-600 bg-slate-300 theme mr-4 z-10  md:flex">
+            {{ user.id}}
+            <TextLink :href="route('chat')" class="chat text-white">Mon chat</TextLink>
+
             <button v-for="{ value, Icon, label } in tabs" :key="value" @click="updateAppearance(value)" :class="[
-                'flex items-center rounded-md px-2 py-[.2rem] transition-colors',
+            'flex items-center rounded-md px-2 py-[.2rem] transition-colors',
                 appearance === value
                     ? 'bg-white shadow-sm text-neutral-900 dark:bg-neutral-700 dark:text-neutral-100'
                     : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/60 dark:hover:text-neutral-100',
@@ -344,7 +348,6 @@ onUnmounted(() => {
                 </div>
             </div>
         </aside>
-
         <!-- Main Content -->
         <main
             :class="['flex-1 p-4 sm:p-6 bg-gray-50 dark:bg-gray-800 mb-16  overflow-y-auto transition-all duration-300 relative', isMobile ? 'ml-0' : (isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-16')]">

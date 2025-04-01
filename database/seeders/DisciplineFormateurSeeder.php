@@ -13,6 +13,6 @@ class DisciplineFormateurSeeder extends Seeder
      */
     public function run(): void
     {
-        DisciplineFormateur::factory()->count(50)->create();
+        DisciplineFormateur::factory()->count(5)->create();
     }
 }
