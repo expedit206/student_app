@@ -59,8 +59,8 @@ const sendMessage = async () => {
     scrollToBottom();
 
     try {
-        // console.log(messageInput.value);
-        // console.log(selectedUser.value.id);
+        console.log(messageInput.value);
+        console.log(selectedUser.value.id);
         const response = await axios.post('/chat/send', {
             message: messageInput.value,
             receiver_id: selectedUser.value.id,
