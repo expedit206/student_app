@@ -41,7 +41,7 @@ Cette application Laravel est conçue pour gérer les interactions entre formate
 - **Inertia.js** : Pour une expérience utilisateur dynamique et réactive.
 - **Vue.js** : Bibliothèque JavaScript pour construire des interfaces utilisateur.
 - **MySQL** : Système de gestion de base de données relationnelle.
-- **Bootstrap** : Pour le style et la mise en page responsive.
+- **Tailwind css** : Pour le style et la mise en page responsive.
 
 ## Installation
 
