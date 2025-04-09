@@ -46,10 +46,14 @@ Cette application Laravel est conçue pour gérer les interactions entre formate
 ## Installation
 
 ### Prérequis
-- PHP >= 7.4
+- PHP >= 8.2
 - Composer
 - Node.js et NPM
 - MySQL
+- Apache
+- Vscode
+- git
+- Un navigateur web (Google chrome, ...)
 
 ### Étapes d'installation
 
