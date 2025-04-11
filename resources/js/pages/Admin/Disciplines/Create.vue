@@ -2,12 +2,19 @@
 import MonLayout from '@/components/MonLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { useForm } from '@inertiajs/vue3';
-import InputError from '@/Components/InputError.vue'; // Pour afficher les erreurs de validation
+import InputError from '@/Components/InputError.vue';
+
+// Props pour les formateurs (supposé passé par Inertia)
+defineProps<{
+    formateurs?: Array<{ id: number; name: string }>;
+}>();
 
 // Initialiser le formulaire avec useForm
 const form = useForm({
     nom: '',
     description: '',
+    heures_hebdo: 0,
+    heures_total: 0,
 });
 
 // Fonction de soumission
@@ -45,8 +52,8 @@ function submit() {
                     <div class="mt-1 relative">
                         <i
                             class="fas fa-book-open absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"></i>
-                        <input id="nom" v-model="form.nom" type="text"
-                            placeholder="Entrez le nom de la discipline" required
+                        <input id="nom" v-model="form.nom" type="text" placeholder="Entrez le nom de la discipline"
+                            required
                             class="pl-10 pr-4 py-3 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 dark:text-gray-100" />
                     </div>
                     <InputError :message="form.errors.nom" class="mt-1" />
@@ -66,6 +73,37 @@ function submit() {
                     <InputError :message="form.errors.description" class="mt-1" />
                 </div>
 
+                <!-- Champ Heures Hebdomadaires -->
+                <div class="mb-6">
+                    <label for="heures_hebdo" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Heures Hebdomadaires
+                    </label>
+                    <div class="mt-1 relative">
+                        <i
+                            class="fas fa-clock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"></i>
+                        <input id="heures_hebdo" v-model.number="form.heures_hebdo" type="number" min="0"
+                            placeholder="Entrez le nombre d'heures par semaine"
+                            class="pl-10 pr-4 py-3 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 dark:text-gray-100" />
+                    </div>
+                    <InputError :message="form.errors.heures_hebdo" class="mt-1" />
+                </div>
+
+                <!-- Champ Heures Totales -->
+                <div class="mb-6">
+                    <label for="heures_total" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Heures Totales
+                    </label>
+                    <div class="mt-1 relative">
+                        <i
+                            class="fas fa-hourglass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"></i>
+                        <input id="heures_total" v-model.number="form.heures_total" type="number" min="0"
+                            placeholder="Entrez le nombre total d'heures"
+                            class="pl-10 pr-4 py-3 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 dark:text-gray-100" />
+                    </div>
+                    <InputError :message="form.errors.heures_total" class="mt-1" />
+                </div>
+
+               
                 <!-- Bouton de soumission -->
                 <button type="submit" :disabled="form.processing"
                     class="w-full bg-green-500 text-white rounded-lg py-3 px-4 hover:bg-green-600 transition-all duration-300 flex items-center justify-center shadow-md">

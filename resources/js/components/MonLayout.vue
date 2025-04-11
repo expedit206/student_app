@@ -136,7 +136,9 @@ onUnmounted(() => {
 
         <div :class="['inline-flex gap-1 rounded-lg  p-1']"
             class="fixed top-0 right-0 mt-1 dark:bg-slate-600 bg-slate-300 theme mr-4 z-10  md:flex">
-            {{ user.id}}
+
+            <!-- le chat  -->
+            <!-- {{ user.id}} -->
             <TextLink :href="route('chat')" class="chat text-white">Mon chat</TextLink>
 
             <button v-for="{ value, Icon, label } in tabs" :key="value" @click="updateAppearance(value)" :class="[
@@ -359,8 +361,8 @@ onUnmounted(() => {
             <div class="scroll-hint bg-indigo-500 dark:bg-indigo-400 text-white px-3 py-1 rounded-full text-xs">Défiler
             </div>
         </main>
-        <footer class="py-6 px-4 bg-gray-50 border-t-2 border-black text-center text-gray-600 absolute bottom-0 right-0"
-            :class="isSidebarVisible ? 'w-[80%]' : 'w-full'">
+        <footer class="py-6 px-4 bg-gray-50 dark:bg-gray-600  border-t-2 border-black text-center text-gray-600 absolute bottom-0 right-0"
+            :class="isSidebarVisible ? 'w-[80%]' : 'w-full'" >
             <p class="text-sm sm:text-base">© {{ new Date().getFullYear() }} Centre de Formation Professionnel La
                 Canadienne. Tous droits réservés. By <a href="mailto:mciagnessi@gmail.com">mciagnessi@gmail.com</a></p>
         </footer>

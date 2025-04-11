@@ -1,0 +1,23 @@
+@startuml
+left to right direction
+
+actor Apprenant
+actor Formateur
+actor Administrateur
+
+rectangle "Système de Gestion de Notes" {
+  
+  Apprenant --> (Consulter ses notes)
+  Apprenant --> (Télécharger son carnet de notes)
+  Apprenant --> (Consulter sa progression)
+
+  Formateur --> (Saisir les notes des apprenants)
+  Formateur --> (Modifier ou valider les notes)
+  Formateur --> (Voir ses formations et disciplines)
+
+  Administrateur --> (Gérer les utilisateurs)
+  Administrateur --> (Attribuer les matières aux formateurs)
+  Administrateur --> (Visualiser les statistiques globales)
+}
+
+@enduml

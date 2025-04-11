@@ -31,9 +31,16 @@ class DisciplineController extends Controller
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'heures_hebdo' => 'required|integer|min:0',
+            'heures_total' => 'required|integer|min:0',
         ]);
-// dd($validated);
-        Discipline::create($validated);
+
+        $discipline = Discipline::create($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json(['discipline' => $discipline], 201);
+        }
+
         return redirect()->route('disciplines.index')->with('success', 'Discipline créée avec succès.');
     }
 
