@@ -110,7 +110,7 @@ function submit() {
                     <span v-else class="flex items-center">
                         <i class="fas fa-spinner fa-spin mr-2"></i>
                         Envoi en cours...
-                    </span>
+                    </span> 
                 </button>
             </form>
         </div>
